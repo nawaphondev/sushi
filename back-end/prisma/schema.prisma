@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for user types
+enum UserType {
+  CUSTOMER
+  ADMIN
+}
+
+// Enum for payment statuses
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// Enum for order statuses
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// Model for users (customers and admins)
+model User {
+  id                Int               @id @default(autoincrement())
+  username          String            @unique
+  password          String
+  email             String?           @unique
+  phoneNumber       String
+  userType          UserType
+  orders            Order[]
+  shippingAddresses ShippingAddress[]
+  paymentMethods    PaymentMethod[]
+  shoppingCart      ShoppingCart[]
+}
+
+// Model for products
+model Product {
+  id           Int            @id @default(autoincrement())
+  name         String
+  productImg   String
+  description  String?
+  color        String
+  capacity     String
+  price        Float
+  stock        Int
+  orderDetails OrderDetail[]
+  shoppingCart ShoppingCart[]
+}
+
+// Model for shopping carts
+model ShoppingCart {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int
+  user      User    @relation(fields: [userId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+// Model for orders
+model Order {
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  orderDate    DateTime      @default(now())
+  status       OrderStatus
+  user         User          @relation(fields: [userId], references: [id])
+  orderDetails OrderDetail[]
+  payments     Payment[]
+}
+
+// Model for order details
+model OrderDetail {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+// Model for payments
+model Payment {
+  id          Int           @id @default(autoincrement())
+  orderId     Int
+  paymentDate DateTime      @default(now())
+  amount      Float
+  method      String
+  status      PaymentStatus
+  order       Order         @relation(fields: [orderId], references: [id])
+}
+
+// Model for payment methods
+model PaymentMethod {
+  id      Int  @id @default(autoincrement())
+  userId  Int
+  details Json // May include card type, card number, expiration date, etc.
+  user    User @relation(fields: [userId], references: [id])
+}
+
+// Model for shipping addresses
+model ShippingAddress {
+  id          Int    @id @default(autoincrement())
+  userId      Int
+  address     String
+  subdistrict String
+  district    String
+  province    String
+  postalCode  String
+  user        User   @relation(fields: [userId], references: [id])
+}
