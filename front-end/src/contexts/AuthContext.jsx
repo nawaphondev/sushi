@@ -13,6 +13,7 @@ function AuthContextProvider(props) {
       try {
         setLoading(true)
         let token = localStorage.getItem('token')
+        // console.log(token)
         if(!token) { return }
         const rs = await axios.get('http://localhost:3001/auth/me', {
           headers : { Authorization : `Bearer ${token}` }
@@ -28,9 +29,18 @@ function AuthContextProvider(props) {
     run()
   }, [])
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem('token')
+  const logout = async () => {
+    try {
+      
+      setLoading(true)
+      localStorage.removeItem('token')
+      setUser(null)
+    } catch (error) {
+      
+      console.log(error.message)
+    }finally {
+      setLoading(false)
+    }
   }
 
   return (

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {useState} from "react";
 import useAuth from '../hooks/useAuth'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 export default function LoginForm() {
   const { setUser } = useAuth()
@@ -9,7 +9,6 @@ export default function LoginForm() {
     username : '', 
     password : ''
   })
-  const navigateToHome = useNavigate("/home")
 
   const hdlChange = e => {
     setInput( prv => ( { ...prv, [e.target.name] : e.target.value } ) )
@@ -41,14 +40,14 @@ export default function LoginForm() {
         <img src="/logo.png" alt="" />
         <h1 className='text-4xl font-medium text-[#8B8E99]'>devphone</h1>
       </div>
-      <div className="mb-5 text-3xl">Login</div>
+      <div className="mb-5 text-3xl">เข้าสู่ระบบ</div>
       <form className="flex flex-col items-center justify-center gap-3" onSubmit={hdlSubmit}>
         <label className="w-full form-control">
-          <span className="text-[#8B8E99] text-sm">Username</span>
+          <span className="text-[#8B8E99] text-sm">ชื่อผู้ใช้</span>
           <input
             type="text"
             className="w-full p-2 rounded-md bg-background border border-[#E4E7E9]"
-            placeholder='Username'
+            placeholder='ชื่อผู้ใช้'
             name="username"
             value={input.username}
             onChange={ hdlChange }
@@ -56,27 +55,27 @@ export default function LoginForm() {
         </label>
 
         <label className="w-full form-control">
-          <span className="text-[#8B8E99] text-sm">Password</span>
+          <span className="text-[#8B8E99] text-sm">รหัสผ่าน</span>
           <input
             type="password"
             className="w-full p-2 rounded-md bg-background border border-[#E4E7E9]"
-            placeholder='Password'
+            placeholder='รหัสผ่าน'
             name="password"
             value={ input.password }
             onChange={ hdlChange }
           />
         </label>
 
-        <div className='font-bold text-primary'>Forgot password?</div>
+        <div className='font-bold text-primary'>ลืมรหัสผ่าน?</div>
         <div className="flex w-full gap-5">
-          <button type="submit" className="w-full p-3 text-center rounded-lg bg-primary text-primary-foreground">Login</button>
+          <button type="submit" className="w-full p-3 text-center rounded-lg bg-primary text-primary-foreground">เข้าสู่ระบบ</button>
         </div>
       </form>
 
       
         <div className='flex flex-row justify-center w-full gap-16'>
-          <div>Dont have an account?</div>
-          <Link className='font-bold text-primary' to="/register">register</Link>
+          <div>ยังไม่มีบัญชี ?</div>
+          <Link className='font-bold text-primary' to="/register">ลงทะเบียนได้ที่นี่</Link>
         </div>
     </div>
   );

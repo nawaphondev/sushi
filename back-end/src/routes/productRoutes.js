@@ -11,24 +11,18 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Create a new product
-router.post("/products", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
-    const { name, description, color, capacity, price, stock } = req.body;
+    // const { name, description, color, capacity, price, stock, productImg } = req.body;
+    console.log(req.body)
 
     // Handle image upload
-    const productImg64 = req.body.productImg
-      ? await saveImage(req.body.productImg)
-      : "";
-    console.log(productImg64);
-    const newProduct = await productService.createProduct({
-      name,
-      description,
-      color,
-      capacity,
-      price,
-      stock,
-      productImg64,
-    });
+    // const productImg64 = req.body.productImg
+    //   ? await saveImage(req.body.productImg)
+    //   : "";
+    // console.log(productImg64);
+
+    const newProduct = await productService.createProduct(req.body);
 
     res.status(201).json(newProduct);
   } catch (error) {
@@ -37,7 +31,7 @@ router.post("/products", async (req, res) => {
 });
 
 // Get all products
-router.get("/products", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const products = await productService.getAllProducts();
     res.json(products);
@@ -47,7 +41,7 @@ router.get("/products", async (req, res) => {
 });
 
 // Get a product by ID
-router.get("/products/:id", async (req, res) => {
+router.get("/get/:id", async (req, res) => {
   const productId = parseInt(req.params.id, 10);
 
   try {
@@ -65,7 +59,7 @@ router.get("/products/:id", async (req, res) => {
 });
 
 // Update a product by ID
-router.put("/products/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const productId = parseInt(req.params.id, 10);
 
   try {
@@ -86,7 +80,7 @@ router.put("/products/:id", async (req, res) => {
 });
 
 // Delete a product by ID
-router.delete("/products/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const productId = parseInt(req.params.id, 10);
 
   try {
@@ -123,7 +117,7 @@ router.post("/products/upload", upload.single("image"), async (req, res) => {
 });
 
 // Route to update the productImg field
-router.put("/products/:id/updateImage", async (req, res) => {
+router.put("/updateImage/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { imagePath } = req.body;

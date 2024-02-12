@@ -55,6 +55,15 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        Mitr: ['Mitr']
+      },
+      fontWeight: {
+        extralight: 200,
+        light: 300,
+        regular: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700
       },
       keyframes: {
         "accordion-down": {

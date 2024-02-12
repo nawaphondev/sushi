@@ -4,6 +4,8 @@ const prisma = require('../db')
 
 // Create a new product
 const createProduct = async (data) => {
+  data.price = parseFloat(data.price);
+  data.stock = parseInt(data.stock);
   return prisma.product.create({
     data,
   });
