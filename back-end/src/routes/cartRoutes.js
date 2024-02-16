@@ -4,17 +4,17 @@ const router = express.Router();
 const cartService = require("../services/cart.service");
 
 // Create a new cart
-router.post("/carts", async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     const newCart = await cartService.createCart(req.body);
     res.json(newCart);
   } catch (error) {
-    res.status(500).json({ error: "Error creating cart" });
+    res.status(500).json({ error: "Error creating cart", message: error.message });
   }
 });
 
 // Get all carts
-router.get("/carts", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const carts = await cartService.getAllCarts();
     res.json(carts);
@@ -24,7 +24,7 @@ router.get("/carts", async (req, res) => {
 });
 
 // Get a cart by ID
-router.get("/carts/:id", async (req, res) => {
+router.get("/get/:id", async (req, res) => {
   const cartId = parseInt(req.params.id, 10);
 
   try {
@@ -41,8 +41,37 @@ router.get("/carts/:id", async (req, res) => {
   }
 });
 
+// add item to a cart
+router.post("/add", async (req, res) => {
+  console.log(req.body);
+  try {
+    const cartItem = await cartService.addCartItemByCartId(req.body);
+    res.json(cartItem);
+  } catch (error) {
+    res.status(500).json({ error: "Error adding item to cart", message: error.message});
+  }
+});
+
+// remove item from a cart
+router.delete("/remove", async (req, res) => {
+  console.log(req.body);
+  try {
+    const removedCartItem = await cartService.removeShoppingCartItem(req.body);
+
+    if (!removedCartItem) {
+      res.status(404).json({ error: "Cart item not found" });
+      return;
+    }
+
+    res.json(removedCartItem);
+  } catch (error) {
+    res.status(500).json({ error: "Error removing item from cart", message: error.message});
+  }
+});
+
+
 // Update a cart by ID
-router.put("/carts/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const cartId = parseInt(req.params.id, 10);
 
   try {
@@ -60,7 +89,7 @@ router.put("/carts/:id", async (req, res) => {
 });
 
 // Delete a cart by ID
-router.delete("/carts/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const cartId = parseInt(req.params.id, 10);
 
   try {

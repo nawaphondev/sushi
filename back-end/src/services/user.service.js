@@ -18,7 +18,16 @@ const getUserById = async (id) => {
   return prisma.user.findUnique({
     where: {
       id,
-    },
+    }
+  });
+};
+
+// Get a user by username
+const getUserByUsername = async (username) => {
+  return await prisma.user.findUnique({
+    where: {
+      username,
+    }
   });
 };
 
@@ -26,9 +35,9 @@ const getUserById = async (id) => {
 const updateUserById = async (id, data) => {
   return prisma.user.update({
     where: {
-      id,
+      id
     },
-    data,
+    data
   });
 };
 
@@ -39,21 +48,6 @@ const deleteUserById = async (id) => {
       id,
     },
   });
-};
-
-const getUserByUsername = async (username) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        username: username,
-      },
-    });
-    return user;
-  } catch (error) {
-    throw error;
-  } finally {
-    await prisma.$disconnect();
-  }
 };
 
 module.exports = {

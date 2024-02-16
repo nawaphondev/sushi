@@ -4,17 +4,30 @@ const router = express.Router();
 const orderService = require("../services/order.service");
 
 // Create a new order
-router.post("/orders", async (req, res) => {
+router.post("/new", async (req, res) => {
+  const data = req.body
+  // console.log(req.body);
   try {
-    const newOrder = await orderService.createOrder(req.body);
+    const newOrder = await orderService.createOrder({ userId: data.userId });
+    const { id: orderId } = newOrder;
+
+    data.items.forEach(async (item) => {
+      orderService.createOrderDetail({
+        orderId,
+        productId: item.product.id,
+        quantity: item.quantity,
+        price: item.product.price,
+      });
+    });
+
     res.json(newOrder);
   } catch (error) {
-    res.status(500).json({ error: "Error creating order" });
+    res.status(500).json({ error: "Error creating order", message: error.message });
   }
 });
 
 // Get all orders
-router.get("/orders", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const orders = await orderService.getAllOrders();
     res.json(orders);
@@ -24,7 +37,7 @@ router.get("/orders", async (req, res) => {
 });
 
 // Get a order by ID
-router.get("/orders/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
 
   try {
@@ -37,12 +50,12 @@ router.get("/orders/:id", async (req, res) => {
 
     res.json(order);
   } catch (error) {
-    res.status(500).json({ error: "Error getting order" });
+    res.status(500).json({ error: "Error getting order", message: error.message });
   }
 });
 
 // Update a order by ID
-router.put("/orders/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
 
   try {
@@ -60,7 +73,7 @@ router.put("/orders/:id", async (req, res) => {
 });
 
 // Delete a order by ID
-router.delete("/orders/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
 
   try {
@@ -74,6 +87,18 @@ router.delete("/orders/:id", async (req, res) => {
     res.json(deletedOrder);
   } catch (error) {
     res.status(500).json({ error: "Error deleting order" });
+  }
+});
+
+// Get all orders from user
+router.get("/user/:id", async (req, res) => {
+  const userId = parseInt(req.params.id, 10);
+
+  try {
+    const orders = await orderService.getOrdersByUserId(userId);
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: "Error getting orders" });
   }
 });
 

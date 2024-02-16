@@ -7,7 +7,7 @@ const sendEmail = async (data) => {
   const { data: result, error } = await resend.emails.send({
     from: 'Acme <onboarding@resend.dev>',
     to: ['nawaphonphophom55@gmail.com'],
-    subject: `You received a message from ${data.name}`,
+    subject: `คุณได้รับข้อความใหม่จาก ${data.name}`,
     html: `
       <p>${data.message}</p>
       <i>${data.phoneNumber}</i>

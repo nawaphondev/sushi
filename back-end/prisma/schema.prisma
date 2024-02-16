@@ -35,14 +35,17 @@ enum OrderStatus {
 model User {
   id                Int               @id @default(autoincrement())
   username          String            @unique
+  firstName         String?
+  lastName          String?
   password          String
-  email             String?           @unique
+  email             String           @unique
   phoneNumber       String
+  avatar            String?
   userType          UserType
   orders            Order[]
   shippingAddresses ShippingAddress[]
   paymentMethods    PaymentMethod[]
-  shoppingCart      ShoppingCart[]
+  shoppingCart      ShoppingCart?
 }
 
 // Model for products
@@ -56,17 +59,26 @@ model Product {
   price        Float
   stock        Int
   orderDetails OrderDetail[]
-  shoppingCart ShoppingCart[]
+  shoppingCartItem ShoppingCartItem[]
 }
 
 // Model for shopping carts
 model ShoppingCart {
   id        Int     @id @default(autoincrement())
-  userId    Int
+  userId    Int     @unique
+  user      User    @relation(fields: [userId], references: [id])
+  shoppingCartItems ShoppingCartItem[]
+}
+
+// Model for shopping carts
+model ShoppingCartItem {
   productId Int
   quantity  Int
-  user      User    @relation(fields: [userId], references: [id])
+  shoppingCartId Int
+  shoppingCart ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
+
+  @@id([productId, shoppingCartId])
 }
 
 // Model for orders
@@ -74,10 +86,10 @@ model Order {
   id           Int           @id @default(autoincrement())
   userId       Int
   orderDate    DateTime      @default(now())
-  status       OrderStatus
+  status       OrderStatus?  @default(value: PENDING)
   user         User          @relation(fields: [userId], references: [id])
   orderDetails OrderDetail[]
-  payments     Payment[]
+  payments     Payment?
 }
 
 // Model for order details
@@ -87,14 +99,14 @@ model OrderDetail {
   productId Int
   quantity  Int
   price     Float
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
 }
 
 // Model for payments
 model Payment {
   id          Int           @id @default(autoincrement())
-  orderId     Int
+  orderId     Int           @unique
   paymentDate DateTime      @default(now())
   amount      Float
   method      String

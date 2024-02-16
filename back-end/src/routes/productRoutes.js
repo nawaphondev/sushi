@@ -6,24 +6,29 @@ const fs = require("fs").promises;
 const multer = require("multer");
 const path = require("path");
 
+function createFilename(req, file) {
+  fileExtension = path.extname(file.originalname)
+  return req.body.name + fileExtension
+}
+
 // Set up multer for handling file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/images/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, createFilename(req, file))
+  }
+})
+const upload = multer({ storage }).single('productImg')
 
 // Create a new product
-router.post("/add", async (req, res) => {
+router.post("/add", upload, async (req, res) => {
+  const data = req.body
+  data.productImg = createFilename(req, req.file)
   try {
-    // const { name, description, color, capacity, price, stock, productImg } = req.body;
-    console.log(req.body)
-
-    // Handle image upload
-    // const productImg64 = req.body.productImg
-    //   ? await saveImage(req.body.productImg)
-    //   : "";
-    // console.log(productImg64);
-
-    const newProduct = await productService.createProduct(req.body);
-
+    const newProduct = await productService.createProduct(data);
+    
     res.status(201).json(newProduct);
   } catch (error) {
     res.status(500).json({ error: error + "Error creating product" });
@@ -97,24 +102,6 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-// Route to post an image file
-router.post("/products/upload", upload.single("image"), async (req, res) => {
-  try {
-    // Check if file is uploaded
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
-    // Get the file path
-    const imagePath = req.file.path;
-
-    // Respond with the image path
-    res.json({ imagePath });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 // Route to update the productImg field
 router.put("/updateImage/:id", async (req, res) => {

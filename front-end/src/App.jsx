@@ -3,7 +3,7 @@ import AppRouter from "./routes/AppRouter";
 function App() {
 
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <AppRouter />
     </div>
   );

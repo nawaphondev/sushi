@@ -3,8 +3,14 @@ const prisma = require('../db')
 
 // Create a new order
 const createOrder = async (data) => {
-  return prisma.order.create({
-    data,
+  return await prisma.order.create({
+    data
+  });
+};
+
+const createOrderDetail = async (data) => {
+  return await prisma.orderDetail.create({
+    data
   });
 };
 
@@ -19,9 +25,19 @@ const getOrderById = async (id) => {
     where: {
       id,
     },
-    with: {
-      orderDetails: true,
-      payments: true
+    include: {
+      orderDetails: {
+        include: {
+          product: {
+            select: {
+              name: true,
+              productImg: true,
+              capacity: true,
+              color: true
+            }
+          }
+        }
+      }
     }
   });
 };
@@ -45,10 +61,24 @@ const deleteOrderById = async (id) => {
   });
 };
 
+// get all orders from user
+const getOrdersByUserId = async (userId) => {
+  return prisma.order.findMany({
+    where: {
+      userId
+    },
+    include: {
+      orderDetails: true
+    }
+  });
+};
+
 module.exports = {
   createOrder,
   getAllOrders,
   getOrderById,
   updateOrderById,
   deleteOrderById,
+  createOrderDetail,
+  getOrdersByUserId
 };
