@@ -35,8 +35,8 @@ enum OrderStatus {
 model User {
   id                Int               @id @default(autoincrement())
   username          String            @unique
-  firstName         String?
-  lastName          String?
+  firstName         String
+  lastName          String
   password          String
   email             String           @unique
   phoneNumber       String
@@ -44,7 +44,7 @@ model User {
   userType          UserType
   orders            Order[]
   shippingAddresses ShippingAddress[]
-  paymentMethods    PaymentMethod[]
+  Cards    Card[]
   shoppingCart      ShoppingCart?
 }
 
@@ -84,12 +84,14 @@ model ShoppingCartItem {
 // Model for orders
 model Order {
   id           Int           @id @default(autoincrement())
-  userId       Int
   orderDate    DateTime      @default(now())
   status       OrderStatus?  @default(value: PENDING)
-  user         User          @relation(fields: [userId], references: [id])
   orderDetails OrderDetail[]
   payments     Payment?
+  userId       Int
+  shippingAddressId Int
+  user         User          @relation(fields: [userId], references: [id])
+  shippingAddress ShippingAddress @relation(fields: [shippingAddressId], references: [id])
 }
 
 // Model for order details
@@ -115,10 +117,14 @@ model Payment {
 }
 
 // Model for payment methods
-model PaymentMethod {
+model Card {
   id      Int  @id @default(autoincrement())
   userId  Int
-  details Json // May include card type, card number, expiration date, etc.
+  number  String
+  cvv     String
+  month   String
+  year    String
+  name    String
   user    User @relation(fields: [userId], references: [id])
 }
 
@@ -131,5 +137,6 @@ model ShippingAddress {
   district    String
   province    String
   postalCode  String
+  order       Order[]
   user        User   @relation(fields: [userId], references: [id])
 }

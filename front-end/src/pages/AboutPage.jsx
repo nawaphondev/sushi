@@ -1,9 +1,9 @@
-import ContactForm from '../components/ContactForm'
+import ContactForm from '../components/forms/ContactForm'
 
 export default function AboutPage() {
   return (
     <div className='flex items-center justify-center flex-grow w-8/12 mx-auto'>
-      <div className='flex items-center justify-center p-1 rounded-lg shadow-2xl h-fit'>
+      <div className='flex items-center justify-center p-2 rounded-lg shadow-2xl h-fit'>
         <div className='p-12 rounded-lg flex flex-col min-w-[491px] min-h-[647px] bg-[url("/about.png")] bg-contain bg-no-repeat justify-between'>
           <div className='gap-2'>
             <h1 className='text-4xl font-medium text-white'>ช่องทางติดต่อเรา</h1>

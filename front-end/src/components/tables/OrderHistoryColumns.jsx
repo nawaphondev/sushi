@@ -1,14 +1,3 @@
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
 
 export const OrderHistoryColumns = [
@@ -39,11 +28,20 @@ export const OrderHistoryColumns = [
     },
   },
   {
-    id: "actions",
+    id: "details",
     cell: ({ row }) => {
       const order = row.original
 
-      return <Link to={`/order/${order.id}`}>Details</Link>
+      return <Link to={`/order/${order.id}`}>รายละเอียด</Link>
+      
+    },
+  },
+  {
+    id: "track",
+    cell: ({ row }) => {
+      const order = row.original
+
+      return <Link to={`/order/${order.id}`}>ติดตามคำสั่งซื้อ</Link>
       
     },
   },

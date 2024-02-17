@@ -25,13 +25,18 @@ const upload = multer({ storage }).single('productImg')
 // Create a new product
 router.post("/add", upload, async (req, res) => {
   const data = req.body
-  data.productImg = createFilename(req, req.file)
+
+  if (req.file != undefined) {
+    data.productImg = createFilename(req, req.file)
+  }
+  
   try {
     const newProduct = await productService.createProduct(data);
     
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: error + "Error creating product" });
+    console.log(error.message)
+    res.status(500).json({ error: "Error creating product", message: error.message });
   }
 });
 
@@ -64,12 +69,10 @@ router.get("/get/:id", async (req, res) => {
 });
 
 // Update a product by ID
-router.put("/update/:id", async (req, res) => {
-  const productId = parseInt(req.params.id, 10);
-
+router.put("/update", async (req, res) => {
   try {
     const updatedProduct = await productService.updateProductById(
-      productId,
+      req.body.id,
       req.body
     );
 
@@ -85,11 +88,10 @@ router.put("/update/:id", async (req, res) => {
 });
 
 // Delete a product by ID
-router.delete("/delete/:id", async (req, res) => {
-  const productId = parseInt(req.params.id, 10);
+router.delete("/delete", async (req, res) => {
 
   try {
-    const deletedProduct = await productService.deleteProductById(productId);
+    const deletedProduct = await productService.deleteProductById(req.body);
 
     if (!deletedProduct) {
       res.status(404).json({ error: "Product not found" });
@@ -98,7 +100,7 @@ router.delete("/delete/:id", async (req, res) => {
 
     res.json(deletedProduct);
   } catch (error) {
-    res.status(500).json({ error: "Error deleting product" });
+    res.status(500).json({ error: "Error deleting product", message: error.message });
   }
 });
 

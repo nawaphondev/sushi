@@ -7,11 +7,19 @@ import {
   Users,
   QrCode,
   Plus,
-  Minus
+  Minus,
+  Save,
+  NotebookTabs,
+  Smile,
+  CreditCard
 } from "lucide-react"
 
 
 const Icons = {
+  creditCard: CreditCard,
+  smile: Smile,
+  notebook: NotebookTabs,
+  save: Save,
   plus: Plus,
   minus: Minus,
   sun: SunMedium,

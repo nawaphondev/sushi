@@ -17,7 +17,7 @@ function AuthContextProvider(props) {
         const rs = await axios.get('http://localhost:3001/auth/me', {
           headers : { Authorization : `Bearer ${token}` }
         })
-        console.log(rs.data)
+        // console.log(rs.data)
         setUser(rs.data)
         
       }catch(err) {

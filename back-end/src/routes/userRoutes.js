@@ -29,9 +29,19 @@ router.post("/users", async (req, res) => {
 });
 
 // Get all users
-router.get("/all", async (req, res) => {
+router.get("/users", async (req, res) => {
   try {
     const users = await userService.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Error getting users" });
+  }
+});
+
+//get all admins
+router.get("/admins", async (req, res) => {
+  try {
+    const users = await userService.getAllAdmins();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: "Error getting users" });

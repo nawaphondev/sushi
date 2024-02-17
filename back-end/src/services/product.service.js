@@ -6,8 +6,30 @@ const prisma = require('../db')
 const createProduct = async (data) => {
   data.price = parseFloat(data.price);
   data.stock = parseInt(data.stock);
-  return prisma.product.create({
-    data,
+  data.id = parseInt(data.id);
+
+  return prisma.product.upsert({
+    where :{
+      id: data.id || 0
+    },
+    update: {
+      capacity: data?.capacity,
+      color: data?.color,
+      name: data?.name,
+      price: data?.price,
+      productImg: data?.productImg,
+      stock: data?.stock,
+      description: data?.description,
+    },
+    create: {
+      capacity: data.capacity,
+      color: data.color,
+      name: data.name,
+      price: data.price,
+      productImg: data.productImg,
+      stock: data.stock,
+      description: data.description,
+    }
   });
 };
 
@@ -36,7 +58,7 @@ const updateProductById = async (id, data) => {
 };
 
 // Delete a product by ID
-const deleteProductById = async (id) => {
+const deleteProductById = async ({id}) => {
   return prisma.product.delete({
     where: {
       id,

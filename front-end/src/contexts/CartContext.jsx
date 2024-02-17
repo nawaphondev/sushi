@@ -1,43 +1,32 @@
 /* eslint-disable react/prop-types */
 import useAuth from '@/hooks/useAuth'
+import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import {createContext, useState, useEffect} from 'react'
+import {createContext, useState} from 'react'
 
 const CartContext = createContext()
 
 
 function CartContextProvider(props) {
   const [cart, setCart] = useState([])
-  const [loading, setLoading] = useState(true)
   const { user } = useAuth()
 
+  useQuery({
+    queryKey: ['shoppingCartItems', user],
+    queryFn: fetchCart,
+    enabled: !!user,
+  })
 
   async function fetchCart() {
     const res = await axios.get('http://localhost:3001/api/carts/get/'+user.shoppingCart.id)
-    return res.data
+    if (res.status === 200) {
+      setCart(res.data.shoppingCartItems)
+    }
+    return res.data.shoppingCartItems
   }
 
-  useEffect( ()=>{
-    if (!user) { return }
-    const run = async () => {
-      try {
-        setLoading(true)
-        const data = await fetchCart()
-        // console.log(data.shoppingCartItems)
-        // console.log(data)
-        setCart(data.shoppingCartItems)
-        
-      } catch(err) {
-        console.log(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-    run()
-  }, [user])
-
   return (
-    <CartContext.Provider value={{cart, setCart, loading}}>
+    <CartContext.Provider value={{cart, setCart}}>
       {props.children}
     </CartContext.Provider>
   )

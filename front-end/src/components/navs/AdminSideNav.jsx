@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority"
-import Logo from "./Logo";
-import useAuth from "../hooks/useAuth";
-import Icons from "./ui/Icons";
+import Logo from "@/components/Logo";
+import useAuth from "@/hooks/useAuth";
+import Icons from "@/components/ui/Icons";
 
 export default function AdminSideNav() {
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ export default function AdminSideNav() {
         <h2 className='uppercase text-[#3858D6] opacity-50 text-xs'>others</h2>
         <NavButton title="Settings" path="/settings" activePath={pathname}><Icons.settings /></NavButton>
         <Link className='p-2 rounded-md w-full text-[#8B8E99] hover:bg-[#3858D6] flex gap-x-2' to="#" onClick={hdlLogout}>
-          <Icons.logout /> logout
+          <Icons.logout /> Logout
         </Link>
       </div>
     </nav>

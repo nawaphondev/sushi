@@ -14,6 +14,14 @@ const createOrderDetail = async (data) => {
   });
 };
 
+//create many order detail
+const createManyOrderDetail = async (data) => {
+  return await prisma.orderDetail.createMany({
+    data,
+    skipDuplicates: true
+  });
+};
+
 // Get all orders
 const getAllOrders = async () => {
   return prisma.order.findMany();
@@ -80,5 +88,6 @@ module.exports = {
   updateOrderById,
   deleteOrderById,
   createOrderDetail,
-  getOrdersByUserId
+  getOrdersByUserId,
+  createManyOrderDetail
 };

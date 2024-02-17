@@ -5,10 +5,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Link } from "react-router-dom"
+import axios from "axios"
+import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const columns = [
   {
@@ -39,21 +42,27 @@ export const columns = [
   },
   {
     accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => {
+      return <div className="flex items-center">
+        <img className="max-h-16" src={`http://localhost:3001/images/${row.original.productImg}`} alt="" />
+        {row.original.name}
+      </div> 
+    }
+  },
+  {
+    accessorKey: "stock",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Product
+          Stock
           <ArrowUpDown className="w-4 h-4 ml-2" />
         </Button>
       )
     },
-  },
-  {
-    accessorKey: "stock",
-    header: "Stock",
   },
   {
     accessorKey: "capacity",
@@ -78,7 +87,8 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
+      const productId = row.original.id
+      const queryClient = useQueryClient() // can't invalidate because I can't use a hook in here
 
       return (
         <DropdownMenu>
@@ -89,15 +99,27 @@ export const columns = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+            <Link 
+              to={`/products/${productId}`}
+              state={row.original}
             >
-              Copy payment ID
-            </DropdownMenuItem>
+              <DropdownMenuItem>
+              Edit
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => axios.delete(
+                "http://localhost:3001/api/products/delete",
+                {data: {id: productId}}
+              ).then(res => {
+                if (res.status === 200) {
+                  toast("deleted")
+                  queryClient.invalidateQueries("products")
+                }
+              })}
+            >Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -1,7 +1,7 @@
-import { OrderHistoryTable } from './orderHistory/OrderHistoryTable'
-import { OrderHistoryColumns } from './orderHistory/OrderHistoryColumns'
+import { OrderHistoryColumns } from './OrderHistoryColumns'
 import useAuth from '@/hooks/useAuth'
 import { useQuery } from '@tanstack/react-query'
+import { DataTable } from './DataTable'
 
 export default function UserOrders() {
   const { user } = useAuth()
@@ -10,19 +10,19 @@ export default function UserOrders() {
     queryFn: async () => {
       const response = await fetch(`http://localhost:3001/api/orders/user/${user.id}`)
       const data = await response.json()
-      console.log(data)
+      // console.log(data)
       return data
     },
   })
 
-  if (isError) return <div>Error</div>
-  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>เกิดข้อผิดพลาด</div>
+  if (isLoading) return <div>กำลังโหลด...</div>
 
   return (
     <div className='flex flex-col flex-1'>
-      <h1>Orders</h1>
+      <h1>คำสั่งซื้อ</h1>
       
-      <OrderHistoryTable columns={OrderHistoryColumns} data={products}/>
+      <DataTable columns={OrderHistoryColumns} data={products}/>
 
     </div>
   )

@@ -1,5 +1,5 @@
 import {Outlet, useLocation} from 'react-router-dom'
-import AdminSideNav from "@/components/AdminSideNav";
+import AdminSideNav from "@/components/navs/AdminSideNav";
 import { Separator } from '@/components/ui/separator';
 
 export default function AdminLayout() {

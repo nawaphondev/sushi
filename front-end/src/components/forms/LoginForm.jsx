@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {useState} from "react";
-import useAuth from '../hooks/useAuth'
+import useAuth from '../../hooks/useAuth'
 import {Link} from 'react-router-dom'
 
 export default function LoginForm() {
@@ -15,7 +15,7 @@ export default function LoginForm() {
   }
 
   const hdlSubmit = async e => {
-    console.log(input)
+    // console.log(input)
     try {
       e.preventDefault()
       // validation
@@ -61,6 +61,7 @@ export default function LoginForm() {
             type="password"
             className="w-full p-2 rounded-md bg-background border border-[#E4E7E9]"
             placeholder='รหัสผ่าน'
+            autoComplete="off"
             name="password"
             value={ input.password }
             onChange={ hdlChange }
@@ -75,7 +76,7 @@ export default function LoginForm() {
 
       
         <div className='flex flex-row justify-center w-full gap-16'>
-          <div>ยังไม่มีบัญชี ?</div>
+          <div>ยังไม่มีบัญชี?</div>
           <Link className='font-bold text-primary' to="/register">ลงทะเบียนได้ที่นี่</Link>
         </div>
     </div>

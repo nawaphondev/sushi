@@ -10,7 +10,20 @@ const createUser = async (data) => {
 
 // Get all users
 const getAllUsers = async () => {
-  return prisma.user.findMany();
+  return prisma.user.findMany({
+    where: {
+      userType: 'CUSTOMER',
+    },
+  });
+};
+
+// Get all admins
+const getAllAdmins = async () => {
+  return prisma.user.findMany({
+    where: {
+      userType: 'ADMIN',
+    },
+  });
 };
 
 // Get a user by ID
@@ -57,4 +70,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getUserByUsername,
+  getAllAdmins
 };

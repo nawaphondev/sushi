@@ -1,4 +1,4 @@
-import UserSideNav from '@/components/UserSideNav'
+import UserSideNav from '@/components/navs/UserSideNav'
 import { Outlet } from 'react-router-dom'
 
 export default function AccountLayout() {

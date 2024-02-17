@@ -18,17 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { useEffect, useRef, useState } from 'react'
+import {  useRef, useState } from 'react'
 import useAuth from '@/hooks/useAuth'
-import useCart from '@/hooks/useCart'
 import NumberSelector from '@/components/NumberSelector'
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function ProductPage() {
   const { id } = useParams()
   const { user} = useAuth()
-  const { cart, setCart } = useCart()
+  const queryClient = useQueryClient()
   const quantityRef = useRef(null)
   const [quantity, setQuantity] = useState(1)
 
@@ -53,8 +52,8 @@ export default function ProductPage() {
     }
   })
 
-  if (isError) return <div>Error</div>
-  if (isLoading) return <div>Loading</div>
+  if (isError) return <div>พบข้อผิดพลาด</div>
+  if (isLoading) return <div>กำลังโหลด</div>
   
   return (
     <div className='flex items-center justify-center flex-grow w-8/12 mx-auto'>
@@ -116,14 +115,8 @@ export default function ProductPage() {
                   quantity
                 },
                 {
-                  onSuccess: (data) => {
-                    if (cart.find((item) => item.product.id === product.id)) {
-                      setCart(prev => prev.map((item) => {
-                        if (item.product.id === product.id) {item.quantity = data.quantity} return item
-                      }))
-                    } else {
-                      setCart(prev => [...prev, {product: { id: product.id, name: product.name, price: product.price, productImg: product.productImg }, quantity: data.quantity}])
-                    }
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ['shoppingCartItems'] })
                     toast(`${product.name} ถูกเพิ่มไปยังตะกร้า`, {
                       action: {
                         label: 'เรียกกลับ',

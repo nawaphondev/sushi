@@ -1,7 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,20 +9,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Input } from "@/components/ui/input"
-import useAuth from "@/hooks/useAuth"
-import axios from "axios"
-import { useNavigate } from "react-router-dom"
+import { Input } from "@/components/ui/input";
+import useAuth from "@/hooks/useAuth";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -30,31 +24,33 @@ const formSchema = z.object({
   lastName: z.string().min(1),
   email: z.string().email(),
   phoneNumber: z.string().min(1).max(10),
-})
+});
 
-const passwordFormSchema = z.object({
-  currentPassword: z.string().min(8),
-  newPassword: z.string().min(8),
-  confirmPassword: z.string().min(8)
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  path: ['confirmPassword'],
-  message: 'Passwords does not match'
-})
+const passwordFormSchema = z
+  .object({
+    currentPassword: z.string().min(8),
+    newPassword: z.string().min(8),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "รหัสผ่านไม่ตรงกัน",
+  });
 
 export default function UserProfile() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
       email: user.email,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
     },
-  })
+  });
 
   const passwordForm = useForm({
     resolver: zodResolver(passwordFormSchema),
@@ -63,56 +59,75 @@ export default function UserProfile() {
       newPassword: "",
       confirmPassword: "",
     },
-  })
+  });
 
   // 2. Define a submit handler.
   function onSubmit(values) {
-    axios.put('http://localhost:3001/api/users/update', {...values, id: user.id}, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }).then((res) => {
-      logout()
-      navigate('/')
-    }).catch((err) => {
-      console.log(err.message)
-    })
+    axios
+      .put(
+        "http://localhost:3001/api/users/update",
+        { ...values, id: user.id },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          logout();
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
 
   function passwordFormOnSubmit(values) {
-    axios.post('http://localhost:3001/auth/changePassword', {...values, id: user.id}, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }).then((res) => {
-      console.log(res.data)
-      logout()
-      navigate('/')
-    }).catch((err) => {
-      console.log(err.message)
-    })
+    axios
+      .post(
+        "http://localhost:3001/auth/changePassword",
+        { ...values, id: user.id },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        logout();
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
 
   return (
-    <div className='flex flex-col justify-center flex-1 gap-y-6'>
+    <div className="flex flex-col justify-center flex-1 gap-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>โปรไฟล์</CardTitle>
         </CardHeader>
         <CardContent className="flex gap-x-6">
           <Avatar className="w-48 h-48">
             <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>The Optimus Prime</AvatarFallback>
           </Avatar>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid w-full grid-cols-2 gap-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid w-full grid-cols-2 gap-4"
+            >
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>ชื่อ</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -120,13 +135,13 @@ export default function UserProfile() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>นามสกุล</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -134,13 +149,13 @@ export default function UserProfile() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>ชื่อผู้ใช้</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -154,7 +169,7 @@ export default function UserProfile() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>อีเมล</FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>
@@ -162,13 +177,13 @@ export default function UserProfile() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>หมายเลขโทรศัพท์</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -176,7 +191,9 @@ export default function UserProfile() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="col-span-2">Submit</Button>
+              <Button type="submit" className="col-span-2">
+                บันทึการเปลี่ยนแปลง
+              </Button>
             </form>
           </Form>
         </CardContent>
@@ -184,18 +201,20 @@ export default function UserProfile() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card Description</CardDescription>
+          <CardTitle>เปลี่ยนรหัสผ่าน</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...passwordForm}>
-            <form onSubmit={passwordForm.handleSubmit(passwordFormOnSubmit)} className="space-y-8">
+            <form
+              onSubmit={passwordForm.handleSubmit(passwordFormOnSubmit)}
+              className="space-y-8"
+            >
               <FormField
                 control={passwordForm.control}
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current Password</FormLabel>
+                    <FormLabel>รหัสผ่านปัจจุบัน</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -209,7 +228,7 @@ export default function UserProfile() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>รหัสผ่านใหม่</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -224,7 +243,7 @@ export default function UserProfile() {
                 disabled={!passwordForm.watch("newPassword")}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ConfirmPassword</FormLabel>
+                    <FormLabel>ยืนยันรหัสผ่าน</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -232,12 +251,11 @@ export default function UserProfile() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit">บันทึการเปลี่ยนแปลง</Button>
             </form>
           </Form>
         </CardContent>
       </Card>
-
     </div>
-  )
+  );
 }

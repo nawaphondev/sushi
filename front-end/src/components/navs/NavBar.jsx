@@ -1,6 +1,6 @@
 import {Link, useNavigate} from 'react-router-dom'
 import useAuth from '@/hooks/useAuth'
-import Logo from './Logo'
+import Logo from '@/components/Logo'
 import {
   Sheet,
   SheetContent,
@@ -10,33 +10,18 @@ import {
   SheetFooter,
   SheetClose
 } from "@/components/ui/sheet"
-import Icons from './ui/Icons'
+import Icons from '@/components/ui/Icons'
 import useCart from '@/hooks/useCart'
 import { Badge } from "@/components/ui/badge"
-import { Button } from './ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-
+import { Button } from '@/components/ui/button'
 
 export default function NavBar() {
   const navigate = useNavigate()
-  const {user, logout} = useAuth()
+  const { user } = useAuth()
   const { cart } = useCart()
 
-  const hdlLogout = () => {
-    logout()
-    navigate('/')
-  }
-
   return (
-    <div className='sticky top-0 flex flex-row px-32 py-4 bg-[#F5F5F7] justify-between items-center shadow-xl'>
+    <div className='sticky top-0 z-50 flex flex-row px-32 py-4 bg-[#F5F5F7] justify-between items-center shadow-xl'>
       <Link to="/"><Logo /></Link>
       
       <div className='flex items-center gap-x-5'>
@@ -45,7 +30,6 @@ export default function NavBar() {
       </div>
       { user
         ? <div className='flex flex-row items-center justify-center gap-x-6'>
-            <Link className='text-[#8B8E99] font-semibold self-center' to='#' onClick={hdlLogout}>ออกจากระบบ</Link>
             <Sheet>
               <SheetTrigger>
                 <div className='relative'>
@@ -57,7 +41,7 @@ export default function NavBar() {
                 <SheetHeader>
                   <SheetTitle>ตะกร้าสินค้า</SheetTitle>
                   {
-                    cart?.length > 0 ? cart.map((item) => {
+                    cart.length > 0 ? cart.map((item) => {
                       return (
                         <div className='flex flex-row items-center justify-between gap-4' key={item.product.id}>
                           <img src={`http://localhost:3001/images/${item.product.productImg}`} alt="" className='w-20 h-20' />
@@ -66,25 +50,18 @@ export default function NavBar() {
                         </div>
                       )
                       
-                    }) : <div>Your cart is empty! Add some items to your cart.</div>
+                    }) : <div>ตะกร้าสินค้าว่างเปล่า เริ่มช้อปเลย!</div>
                   }
                 </SheetHeader>
                 <SheetFooter>
-                  
-                    <Button asChild onClick={() => navigate('/cart')}><SheetClose>ไปยังตะกร้า</SheetClose></Button>
+                    
+                    {cart.length > 0 && <Button asChild className="w-full" onClick={() => navigate('/cart')}><SheetClose>ไปยังตะกร้า</SheetClose></Button>}
                   
                 </SheetFooter>
               </SheetContent>
             </Sheet>
-            <DropdownMenu>
-              <DropdownMenuTrigger><Icons.user className='w-8 h-8'/></DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>
-                <Link to="/account">บัญชีของฉัน</Link></DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>ออกจากระบบ</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Link to="/account"><Icons.user className='w-8 h-8'/></Link>
+            
 
             
           </div>
