@@ -38,60 +38,61 @@ model User {
   firstName         String
   lastName          String
   password          String
-  email             String           @unique
+  email             String            @unique
   phoneNumber       String
   avatar            String?
   userType          UserType
   orders            Order[]
   shippingAddresses ShippingAddress[]
-  Cards    Card[]
+  Cards             Card[]
   shoppingCart      ShoppingCart?
 }
 
 // Model for products
 model Product {
-  id           Int            @id @default(autoincrement())
-  name         String
-  productImg   String
-  description  String?
-  color        String
-  capacity     String
-  price        Float
-  stock        Int
-  orderDetails OrderDetail[]
+  id               Int                @id @default(autoincrement())
+  name             String
+  productImg       String
+  description      String?
+  color            String
+  capacity         String
+  price            Float
+  stock            Int
+  orderDetails     OrderDetail[]
   shoppingCartItem ShoppingCartItem[]
 }
 
 // Model for shopping carts
 model ShoppingCart {
-  id        Int     @id @default(autoincrement())
-  userId    Int     @unique
-  user      User    @relation(fields: [userId], references: [id])
+  id                Int                @id @default(autoincrement())
+  userId            Int                @unique
+  user              User               @relation(fields: [userId], references: [id])
   shoppingCartItems ShoppingCartItem[]
 }
 
 // Model for shopping carts
 model ShoppingCartItem {
-  productId Int
-  quantity  Int
+  productId      Int
+  quantity       Int
   shoppingCartId Int
-  shoppingCart ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+  shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade)
+  product        Product      @relation(fields: [productId], references: [id])
 
   @@id([productId, shoppingCartId])
 }
 
 // Model for orders
 model Order {
-  id           Int           @id @default(autoincrement())
-  orderDate    DateTime      @default(now())
-  status       OrderStatus?  @default(value: PENDING)
-  orderDetails OrderDetail[]
-  payments     Payment?
-  userId       Int
+  id                Int             @id @default(autoincrement())
+  orderDate         DateTime        @default(now())
+  status            OrderStatus?    @default(value: PENDING)
+  orderDetails      OrderDetail[]
+  deliveryFee       Float           @default(0)
+  userId            Int
   shippingAddressId Int
-  user         User          @relation(fields: [userId], references: [id])
-  shippingAddress ShippingAddress @relation(fields: [shippingAddressId], references: [id])
+  user              User            @relation(fields: [userId], references: [id])
+  shippingAddress   ShippingAddress @relation(fields: [shippingAddressId], references: [id])
+  payment           Payment?
 }
 
 // Model for order details
@@ -108,29 +109,29 @@ model OrderDetail {
 // Model for payments
 model Payment {
   id          Int           @id @default(autoincrement())
-  orderId     Int           @unique
   paymentDate DateTime      @default(now())
   amount      Float
   method      String
-  status      PaymentStatus
+  status      PaymentStatus @default(value: PENDING)
+  orderId     Int           @unique
   order       Order         @relation(fields: [orderId], references: [id])
 }
 
 // Model for payment methods
 model Card {
-  id      Int  @id @default(autoincrement())
-  userId  Int
-  number  String
-  cvv     String
-  month   String
-  year    String
-  name    String
-  user    User @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  userId Int
+  number String
+  cvv    String
+  month  String
+  year   String
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 // Model for shipping addresses
 model ShippingAddress {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   userId      Int
   address     String
   subdistrict String
@@ -138,5 +139,5 @@ model ShippingAddress {
   province    String
   postalCode  String
   order       Order[]
-  user        User   @relation(fields: [userId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
 }

@@ -1,7 +1,6 @@
 require('dotenv').config()
 // backend/server.js
 const express = require('express');
-// const userRoutes = require('./src/routes/userRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
 const orderRoutes = require('./src/routes/orderRoutes');
 const shipAddressRoutes = require('./src/routes/shipAddressRoutes');
@@ -10,6 +9,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const contactRoutes = require('./src/routes/contactRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const cardRoutes = require('./src/routes/cardRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 const cors = require('cors')
 
 const app = express();
@@ -34,6 +34,7 @@ app.use('/api/carts', cartRoutes);
 app.use('/api/addresses', shipAddressRoutes);
 app.use('/api/cards', cardRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/auth', authRoutes)
 app.use('/contact', contactRoutes)
 

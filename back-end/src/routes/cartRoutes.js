@@ -43,7 +43,7 @@ router.get("/get/:id", async (req, res) => {
 
 // add item to a cart
 router.post("/add", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const cartItem = await cartService.addCartItemByCartId(req.body);
     res.json(cartItem);
@@ -54,7 +54,7 @@ router.post("/add", async (req, res) => {
 
 // remove item from a cart
 router.delete("/remove", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const removedCartItem = await cartService.removeShoppingCartItem(req.body);
 

@@ -4,7 +4,7 @@ const { createUser, getUserByUsername, getUserById, updateUserById } = require("
 const { createCart } = require("../services/cart.service");
 
 exports.register = async (req, res, next) => {
-  const { username, password, confirmPassword, email, phoneNumber } = req.body;
+  const { username, password, confirmPassword, email, phoneNumber, firstName, lastName } = req.body;
   try {
     // validation
     if (!(username && password && confirmPassword)) {
@@ -18,6 +18,8 @@ exports.register = async (req, res, next) => {
     // console.log(hashedPassword);
     const data = {
       username,
+      firstName,
+      lastName,
       password : hashedPassword,
       email,
       phoneNumber,

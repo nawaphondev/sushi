@@ -68,7 +68,7 @@ router.get("/:id", async (req, res) => {
 
 // Update a user by ID
 router.put("/update",authenticate , async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
 
   try {
     const updatedUser = await userService.updateUserById(req.body.id, req.body);

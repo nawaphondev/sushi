@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const orderService = require("../services/order.service");
 const { removeShoppingCartItems } = require("../services/cart.service");
-const { shoppingCartItem } = require("../db");
+const paymentService = require("../services/payment.service");
 
 // Create a new order
 router.post("/new", async (req, res) => {
@@ -26,8 +26,13 @@ router.post("/new", async (req, res) => {
     })
     await orderService.createManyOrderDetail(orderDetails)
     await removeShoppingCartItems(data.shoppingCartId, orderDetails.map((item) => item.productId))
+    const payment = await paymentService.createPayment({
+      orderId,
+      method: data.paymentMethod,
+      amount: orderDetails.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    })
 
-    res.json(newOrder);
+    res.json({...newOrder, paymentId: payment.id});
   } catch (error) {
     console.log(req.body, error.message)
     res.status(500).json({ error: "Error creating order", message: error.message });
@@ -40,7 +45,7 @@ router.get("/all", async (req, res) => {
     const orders = await orderService.getAllOrders();
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: "Error getting orders" });
+    res.status(500).json({ error: "Error getting orders", message: error.message });
   }
 });
 
