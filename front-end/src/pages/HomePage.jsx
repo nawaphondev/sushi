@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import Icons from "../components/ui/Icons";
+import Icons from "../components/Icons";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import useAuth from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -19,21 +20,20 @@ export default function HomePage() {
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:3001/api/products/all");
-      const data = await response.json();
-      return data;
+      return axios
+        .get("http://localhost:3001/api/products/all")
+        .then((res) => res.data);
     },
   });
 
   const { mutate } = useMutation({
     mutationFn: async (data) => {
-      return fetch(`http://localhost:3001/api/carts/add`, {
-        method: "POST",
-        body: JSON.stringify({ ...data, shoppingCartId: user.shoppingCart.id }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(async (res) => await res.json());
+      return axios
+        .post(`http://localhost:3001/api/carts/add`, {
+          ...data,
+          shoppingCartId: user.shoppingCart.id,
+        })
+        .then((res) => res.data);
     },
   });
 

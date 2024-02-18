@@ -37,4 +37,4 @@ export const columns = [
       <DataTableColumnHeader column={column} title="Phone Number" />
     ),
   },
-]
+];

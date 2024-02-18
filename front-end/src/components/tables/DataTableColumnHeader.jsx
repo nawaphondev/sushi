@@ -1,27 +1,18 @@
 /* eslint-disable react/prop-types */
-import {
-  ChevronUp,
-  ChevronDown,
-  Eye,
-  MoreHorizontal
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import Icons from "../Icons";
 
-export function DataTableColumnHeader({
-  column,
-  title,
-  className,
-}) {
+export function DataTableColumnHeader({ column, title, className }) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn(className)}>{title}</div>;
   }
 
   return (
@@ -35,30 +26,30 @@ export function DataTableColumnHeader({
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
-              <ChevronDown className="w-4 h-4 ml-2" />
+              <Icons.chevD className="w-4 h-4 ml-2" />
             ) : column.getIsSorted() === "asc" ? (
-              <ChevronUp className="w-4 h-4 ml-2" />
+              <Icons.chevU className="w-4 h-4 ml-2" />
             ) : (
-              <MoreHorizontal className="w-4 h-4 ml-2" />
+              <Icons.more className="w-4 h-4 ml-2" />
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ChevronUp className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icons.chevU className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ChevronDown className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icons.chevD className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <Eye className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            <Icons.eye className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Hide
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }

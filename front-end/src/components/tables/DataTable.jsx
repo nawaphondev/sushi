@@ -1,28 +1,22 @@
 /* eslint-disable react/prop-types */
 import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight
-} from "lucide-react"
-import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -30,20 +24,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useState } from "react"
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import Icons from "../Icons";
 
-export function DataTable({ columns, data, showPagination = true, showColumnVisibility = true, filterTarget}) {
-  const [sorting, setSorting] = useState([])
-  const [columnFilters, setColumnFilters] = useState([])
-  const [columnVisibility, setColumnVisibility] = useState({})
-  const [rowSelection, setRowSelection] = useState({})
+export function DataTable({
+  columns,
+  data,
+  showSelected = false,
+  showPagination = true,
+  showColumnVisibility = true,
+  filterTarget,
+}) {
+  const [sorting, setSorting] = useState([]);
+  const [columnFilters, setColumnFilters] = useState([]);
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -62,23 +64,25 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div>
       <div className="flex items-center py-4">
-        { filterTarget && (
+        {filterTarget && (
           <Input
             placeholder={`Filter ${filterTarget}...`}
-            value={(table.getColumn("filterTarget")?.getFilterValue()) ?? ""}
+            value={table.getColumn("filterTarget")?.getFilterValue() ?? ""}
             onChange={(event) =>
-              table.getColumn("filterTarget")?.setFilterValue(event.target.value)
+              table
+                .getColumn("filterTarget")
+                ?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
         )}
 
-        { showColumnVisibility && (
+        {showColumnVisibility && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
@@ -88,9 +92,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
-                .filter(
-                  (column) => column.getCanHide()
-                )
+                .filter((column) => column.getCanHide())
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
@@ -103,7 +105,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  )
+                  );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -124,7 +126,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -138,14 +140,20 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -154,25 +162,28 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
         </Table>
       </div>
 
-      { showPagination && (
+      {showPagination && (
         <div className="flex items-center justify-between px-2">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
+          {showSelected && (
+            <div className="flex-1 text-sm text-muted-foreground">
+              {table.getFilteredSelectedRowModel().rows.length} of{" "}
+              {table.getFilteredRowModel().rows.length} row(s) selected.
+            </div>
+          )}
 
-        
-          <div className="flex items-center space-x-6 lg:space-x-8">
+          <div className="flex items-center justify-between flex-1 space-x-6 lg:space-x-8">
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value))
+                  table.setPageSize(Number(value));
                 }}
               >
                 <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue placeholder={table.getState().pagination.pageSize} />
+                  <SelectValue
+                    placeholder={table.getState().pagination.pageSize}
+                  />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -195,7 +206,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <ChevronsLeft className="w-4 h-4" />
+                <Icons.chevL2 className="w-4 h-4" />
               </Button>
               <Button
                 variant="outline"
@@ -204,7 +215,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <ChevronLeft className="w-4 h-4" />
+                <Icons.chevL className="w-4 h-4" />
               </Button>
               <Button
                 variant="outline"
@@ -213,7 +224,7 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <ChevronRight className="w-4 h-4" />
+                <Icons.chevR className="w-4 h-4" />
               </Button>
               <Button
                 variant="outline"
@@ -222,12 +233,12 @@ export function DataTable({ columns, data, showPagination = true, showColumnVisi
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
-                <ChevronsRight className="w-4 h-4" />
+                <Icons.chevR2 className="w-4 h-4" />
               </Button>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { DataTableColumnHeader } from "./DataTableColumnHeader";
 import { thaiDateFormat } from "@/lib/utils";
 
-export const OrderHistoryColumns = [
+export const OrderColumns = [
   {
     accessorKey: "id",
-    header: "ID",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ID" />
+    ),
   },
   {
     accessorKey: "status",
@@ -32,16 +35,19 @@ export const OrderHistoryColumns = [
         style: "currency",
         currency: "THB",
       }).format(amount);
-      return <div className="font-medium text-right">{formatted}</div>;
+      return <div className="font-medium">{formatted}</div>;
     },
   },
   {
-    id: "details",
+    id: "actions",
     cell: ({ row }) => {
-      const order = row.original;
+      const orderId = row.original.id;
+
       return (
         <Button asChild>
-          <Link to={`/order/${order.id}`}>รายละเอียด</Link>
+          <Link to={`/orders/${orderId}`} state={row.original}>
+            Details
+          </Link>
         </Button>
       );
     },

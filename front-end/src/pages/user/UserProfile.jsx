@@ -113,8 +113,11 @@ export default function UserProfile() {
         </CardHeader>
         <CardContent className="flex gap-x-6">
           <Avatar className="w-48 h-48">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>The Optimus Prime</AvatarFallback>
+            <AvatarImage src="http://localhost:3001/images/avatar/??.png" />
+            <AvatarFallback className="text-9xl">
+              {user.firstName[0]}
+              {user.lastName[0]}
+            </AvatarFallback>
           </Avatar>
 
           <Form {...form}>

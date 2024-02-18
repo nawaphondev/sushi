@@ -1,6 +1,6 @@
-import CartQuantity from "@/components/CartQuantity"
-import CartRemoveButton from "@/components/CartRemoveButton"
-import { Checkbox } from "@/components/ui/checkbox"
+import CartQuantity from "@/components/CartQuantity";
+import CartRemoveButton from "@/components/CartRemoveButton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const cartColumns = [
   {
@@ -29,43 +29,45 @@ export const cartColumns = [
     accessorKey: "product",
     header: "Product",
     cell: ({ row }) => {
-      return `${row.original.product.name} ${row.original.product.price} - ${row.original.product.color}`
-    }
+      return `${row.original.product.name} ${row.original.product.price} - ${row.original.product.color}`;
+    },
   },
   {
     accessorKey: "price",
     header: "Price",
     cell: ({ row }) => {
-      return `${row.original.product.price}`
-    }
+      return `${row.original.product.price}`;
+    },
   },
   {
     accessorKey: "quantity",
     header: "Quantity",
     cell: ({ row }) => {
-      const quantity = row.getValue("quantity")
+      const quantity = row.getValue("quantity");
       // return quantity
-      return <CartQuantity quantity={quantity} className="w-10" />
-    }
+      return <CartQuantity quantity={quantity} className="w-10" />;
+    },
   },
   {
     accessorKey: "subtotal",
     header: "Subtotal",
     cell: ({ row }) => {
-      const amount = parseFloat(row.original.product.price * row.original.quantity)
+      const amount = parseFloat(
+        row.original.product.price * row.original.quantity
+      );
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "THB",
-      }).format(amount)
-      return <div className="font-medium text-right">{formatted}</div>
+      }).format(amount);
+      return <div className="font-medium text-right">{formatted}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const {id: productId} = row.original.product
+      const { id: productId } = row.original.product;
 
-      return <CartRemoveButton productId={productId} />
+      return <CartRemoveButton productId={productId} />;
     },
   },
-]
+];

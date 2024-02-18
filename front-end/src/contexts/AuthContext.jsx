@@ -1,54 +1,53 @@
 /* eslint-disable react/prop-types */
-import axios from 'axios'
-import {createContext, useState, useEffect} from 'react'
+import axios from "axios";
+import { createContext, useState, useEffect } from "react";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 function AuthContextProvider(props) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect( ()=>{
+  useEffect(() => {
     const run = async () => {
       try {
-        setLoading(true)
-        let token = localStorage.getItem('token')
-        if(!token) { return }
-        const rs = await axios.get('http://localhost:3001/auth/me', {
-          headers : { Authorization : `Bearer ${token}` }
-        })
+        setLoading(true);
+        let token = localStorage.getItem("token");
+        if (!token) {
+          return;
+        }
+        const rs = await axios.get("http://localhost:3001/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         // console.log(rs.data)
-        setUser(rs.data)
-        
-      }catch(err) {
-        console.log(err.message)
-      }finally {
-        setLoading(false)
+        setUser(rs.data);
+      } catch (err) {
+        console.log(err.message);
+      } finally {
+        setLoading(false);
       }
-    }
-    run()
-  }, [])
+    };
+    run();
+  }, []);
 
   function logout() {
     try {
-      
-      setLoading(true)
-      localStorage.removeItem('token')
-      setUser(null)
+      setLoading(true);
+      localStorage.removeItem("token");
+      setUser(null);
     } catch (error) {
-      
-      console.log(error.message)
-    }finally {
-      setLoading(false)
+      console.log(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <AuthContext.Provider value={ {user, setUser, loading, logout} }>
+    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
       {props.children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export { AuthContextProvider }
-export default AuthContext
+export { AuthContextProvider };
+export default AuthContext;

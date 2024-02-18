@@ -2,13 +2,13 @@ import { z } from "zod";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import useAuth from "@/hooks/useAuth";
-
+import { QRCodeSVG } from "qrcode.react";
 import promptpay from "@/assets/promptpay.png";
 import AddressForm from "@/components/forms/AddressForm";
-import Icons from "@/components/ui/Icons";
+import Icons from "@/components/Icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -43,10 +43,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-import thaiAddressIdToString from "@/lib/thaiAddressIdToString";
 import CardForm from "@/components/forms/CardForm";
 import { useState } from "react";
+import thaiAddress from "@/lib/thaiAddress";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "กรุณาระบุชื่อผู้รับ" }),
@@ -61,19 +60,8 @@ const formSchema = z.object({
   card: z.string(),
 });
 
-function fullAddress(address) {
-  return `${address.address}, ${thaiAddressIdToString(
-    address.subdistrict,
-    "subdistrict"
-  )}, ${thaiAddressIdToString(
-    address.district,
-    "district"
-  )}, ${thaiAddressIdToString(address.province, "province")}, ${
-    address.postalCode
-  }`;
-}
-
 export default function CheckOutPage() {
+  const [paymentId, setPaymentId] = useState("");
   const { state } = useLocation();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -94,6 +82,16 @@ export default function CheckOutPage() {
       axios.get("http://localhost:3001/api/cards/allbyuserid").then((res) => {
         return res.data;
       }),
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: (status) =>
+      axios
+        .put("http://localhost:3001/api/payments/update", {
+          id: paymentId,
+          status,
+        })
+        .then((res) => res.data),
   });
 
   // 1. Define your form.
@@ -125,7 +123,9 @@ export default function CheckOutPage() {
       });
 
       if (res.status === 200) {
-        // console.log(res.data)
+        console.log(res.data);
+
+        setPaymentId(res.data.paymentId);
 
         if (
           values.paymentMethod === "promptpay" ||
@@ -248,7 +248,7 @@ export default function CheckOutPage() {
                                   key={address.id}
                                   value={address.id.toString()}
                                 >
-                                  {fullAddress(address)}
+                                  {thaiAddress(address)}
                                 </SelectItem>
                               );
                             })}
@@ -315,7 +315,7 @@ export default function CheckOutPage() {
                                 htmlFor="option-four"
                                 className="flex flex-col items-center justify-center p-2 border rounded-md gap-y-4 has-[:checked]:border-primary"
                               >
-                                <Icons.creditCard className="w-12 h-12 text-primary" />
+                                <Icons.creditcard className="w-12 h-12 text-primary" />
                                 บัตรเครดิต
                                 <RadioGroupItem
                                   value="card"
@@ -338,7 +338,7 @@ export default function CheckOutPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center justify-between">
-                          บัตรเครดิต
+                            บัตรเครดิต
                             <CardForm title={"Add new card"} />
                           </FormLabel>
 
@@ -432,7 +432,15 @@ export default function CheckOutPage() {
             <DialogTitle>วิธีชำระเงิน</DialogTitle>
             <DialogDescription>{form.watch("paymentMethod")}</DialogDescription>
           </DialogHeader>
-          QR CODE HERE
+          <QRCodeSVG
+            className="w-full"
+            onClick={() =>
+              mutate("COMPLETED", {
+                onSuccess: (data) => navigate("/order/" + data.orderId),
+              })
+            }
+            value={paymentId}
+          />
         </DialogContent>
       </Dialog>
     </div>

@@ -1,16 +1,14 @@
-import { OrderHistoryColumns } from "./OrderHistoryColumns";
-import useAuth from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "./DataTable";
+import { PaymentColumns } from "./PaymentColumns";
 import axios from "axios";
 
-export default function UserOrders() {
-  const { user } = useAuth();
+export default function PaymentTable() {
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["orders"],
+    queryKey: ["payments"],
     queryFn: async () => {
       return axios
-        .get(`http://localhost:3001/api/orders/user/${user.id}`)
+        .get("http://localhost:3001/api/payments/all")
         .then((res) => res.data);
     },
   });
@@ -19,10 +17,8 @@ export default function UserOrders() {
   if (isLoading) return <div>กำลังโหลด...</div>;
 
   return (
-    <div className="flex flex-col flex-1">
-      <h1>คำสั่งซื้อ</h1>
-
-      <DataTable columns={OrderHistoryColumns} data={data} />
+    <div className="flex flex-col">
+      <DataTable columns={PaymentColumns} data={data} />
     </div>
   );
 }

@@ -2,13 +2,10 @@ import { useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import useCart from "@/hooks/useCart";
-import { cartColumns as columns } from "@/lib/CartColumns";
+import { cartColumns as columns } from "@/components/tables/CartColumns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +27,6 @@ import { Link } from "react-router-dom";
 
 export default function CartPage() {
   const { cart: data } = useCart();
-  const [sorting, setSorting] = useState([]);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const [total, setTotal] = useState(0);
 
@@ -40,17 +34,8 @@ export default function CartPage() {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
       rowSelection,
     },
   });
@@ -159,10 +144,16 @@ export default function CartPage() {
             <Button
               className="w-full"
               asChild
-              variant={table.getSelectedRowModel().flatRows.length > 0 ? "default" : "disabled"}
+              variant={
+                table.getSelectedRowModel().flatRows.length > 0
+                  ? "default"
+                  : "disabled"
+              }
             >
               <Link
-                to={table.getSelectedRowModel().flatRows.length > 0 && "/checkout"}
+                to={
+                  table.getSelectedRowModel().flatRows.length > 0 && "/checkout"
+                }
                 // to={{ pathname: "/checkout" }}
                 state={{
                   items: table
@@ -174,8 +165,6 @@ export default function CartPage() {
                 ดำเนินการสั่งซื้อ
               </Link>
             </Button>
-                
-            
           </CardFooter>
         </Card>
       </div>
