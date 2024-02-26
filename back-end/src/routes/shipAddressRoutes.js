@@ -1,16 +1,20 @@
 // shipAddress.routes.js
 const express = require("express");
 const router = express.Router();
-const shipAddressService = require("../services/ship_address.service");
+const shipAddressService = require("../controllers/address");
 
 // Create a new shipAddress
 router.post("/new", async (req, res) => {
   try {
-    const newShipAddress = await shipAddressService.createOrEditShipAddress(req.body);
+    const newShipAddress = await shipAddressService.createOrEditShipAddress(
+      req.body
+    );
     res.json(newShipAddress);
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: "Error creating shipAddress", message: error.message});
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Error creating shipAddress", message: error.message });
   }
 });
 
@@ -27,20 +31,21 @@ router.get("/all", async (req, res) => {
 // get all shipAddresss by user id
 router.get("/allbyuserid", async (req, res) => {
   try {
-    const shipAddresss = await shipAddressService.getAllShipAddresssByUserId(req.body);
+    const shipAddresss = await shipAddressService.getAllShipAddresssByUserId(
+      req.body
+    );
     res.json(shipAddresss);
   } catch (error) {
-    res.status(500).json({ error: "Error getting shipAddresss", message: error.message });
+    res
+      .status(500)
+      .json({ error: "Error getting shipAddresss", message: error.message });
   }
 });
 
 // Get a shipAddress by ID
 router.get("/get", async (req, res) => {
-
   try {
-    const shipAddress = await shipAddressService.getShipAddressById(
-      req.body
-    );
+    const shipAddress = await shipAddressService.getShipAddressById(req.body);
 
     if (!shipAddress) {
       res.status(404).json({ error: "ShipAddress not found" });
@@ -55,7 +60,6 @@ router.get("/get", async (req, res) => {
 
 // Update a shipAddress by ID
 router.put("/update", async (req, res) => {
-
   try {
     const updatedShipAddress = await shipAddressService.updateShipAddressById(
       req.body.id,
@@ -82,7 +86,9 @@ router.post("/delete", async (req, res) => {
 
     res.json(deletedShipAddress);
   } catch (error) {
-    res.status(500).json({ error: "Error deleting shipAddress", message: error.message });
+    res
+      .status(500)
+      .json({ error: "Error deleting shipAddress", message: error.message });
   }
 });
 

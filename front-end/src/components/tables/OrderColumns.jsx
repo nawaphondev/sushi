@@ -12,18 +12,18 @@ export const OrderColumns = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "สถานะ",
   },
   {
     accessorKey: "orderDate",
-    header: "Order Date",
+    header: "วันที่สั่งซื้อ",
     cell: ({ row }) => {
       return thaiDateFormat(row.getValue("orderDate"));
     },
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: "ราคา",
     cell: ({ row }) => {
       // const total = 0
       const total = row.original?.orderDetails?.reduce(
@@ -31,11 +31,8 @@ export const OrderColumns = [
         0
       );
       const amount = parseFloat(total);
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "THB",
-      }).format(amount);
-      return <div className="font-medium">{formatted}</div>;
+      const formatted = new Intl.NumberFormat("th-TH").format(amount);
+      return <div className="font-medium">{formatted} บาท</div>;
     },
   },
   {
@@ -46,7 +43,7 @@ export const OrderColumns = [
       return (
         <Button asChild>
           <Link to={`/orders/${orderId}`} state={row.original}>
-            Details
+            รายละเอียด
           </Link>
         </Button>
       );

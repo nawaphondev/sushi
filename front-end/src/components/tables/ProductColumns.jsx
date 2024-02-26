@@ -19,7 +19,7 @@ export const columns = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: "ชื่อ",
     cell: ({ row }) => {
       return (
         <div className="flex items-center">
@@ -41,7 +41,7 @@ export const columns = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Stock
+          คงคลัง
           <Icons.arrowUD className="w-4 h-4 ml-2" />
         </Button>
       );
@@ -49,30 +49,25 @@ export const columns = [
   },
   {
     accessorKey: "capacity",
-    header: "Capacity",
+    header: "ความจุ",
   },
   {
     accessorKey: "color",
-    header: "Color",
+    header: "สี",
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: "ราคา",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "THB",
-      }).format(amount);
-      return <div className="font-medium">{formatted}</div>;
+      const formatted = new Intl.NumberFormat("en-US").format(amount);
+      return <div className="font-medium">{formatted} บาท</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const productId = row.original.id;
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const queryClient = useQueryClient(); // can't invalidate because I can't use a hook in here
 
       return (
         <DropdownMenu>
@@ -84,29 +79,36 @@ export const columns = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <Link to={`/products/${productId}`} state={row.original}>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>แก้ไข</DropdownMenuItem>
             </Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() =>
-                axios
-                  .delete("http://localhost:3001/api/products/delete", {
-                    data: { id: productId },
-                  })
-                  .then((res) => {
-                    if (res.status === 200) {
-                      toast("deleted");
-                      queryClient.invalidateQueries("products");
-                    }
-                  })
-              }
-            >
-              Delete
-            </DropdownMenuItem>
+            <DeleteProductButton id={productId}/>
           </DropdownMenuContent>
         </DropdownMenu>
       );
     },
   },
 ];
+
+
+// eslint-disable-next-line react/prop-types
+function DeleteProductButton({id}) {
+  const queryClient = useQueryClient();
+  return <DropdownMenuItem
+    className="text-destructive"
+    onClick={() =>
+      axios
+        .delete("http://localhost:3001/api/products/delete", {
+          data: { id },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            toast("deleted");
+            queryClient.invalidateQueries("products");
+          }
+        })
+    }
+  >
+    ลบ
+  </DropdownMenuItem>
+}

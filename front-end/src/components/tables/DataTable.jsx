@@ -154,7 +154,7 @@ export function DataTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  ไม่พบผลลัพท์
                 </TableCell>
               </TableRow>
             )}
@@ -166,14 +166,14 @@ export function DataTable({
         <div className="flex items-center justify-between px-2">
           {showSelected && (
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
+              {table.getFilteredSelectedRowModel().rows.length} จาก{" "}
+              {table.getFilteredRowModel().rows.length} แถว ที่เลือกแล้ว
             </div>
           )}
 
           <div className="flex items-center justify-between flex-1 space-x-6 lg:space-x-8">
             <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium">Rows per page</p>
+              <p className="text-sm font-medium">แถวต่อหน้า</p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
@@ -195,7 +195,7 @@ export function DataTable({
               </Select>
             </div>
             <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              หน้า {table.getState().pagination.pageIndex + 1} จาก{" "}
               {table.getPageCount()}
             </div>
             <div className="flex items-center space-x-2">
@@ -205,7 +205,7 @@ export function DataTable({
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">Go to first page</span>
+                <span className="sr-only">ไปหน้าแรก</span>
                 <Icons.chevL2 className="w-4 h-4" />
               </Button>
               <Button
@@ -214,7 +214,7 @@ export function DataTable({
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">Go to previous page</span>
+                <span className="sr-only">ไปหน้าก่อนหน้า</span>
                 <Icons.chevL className="w-4 h-4" />
               </Button>
               <Button
@@ -223,7 +223,7 @@ export function DataTable({
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">Go to next page</span>
+                <span className="sr-only">ไปหน้าถัดไป</span>
                 <Icons.chevR className="w-4 h-4" />
               </Button>
               <Button
@@ -232,7 +232,7 @@ export function DataTable({
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">Go to last page</span>
+                <span className="sr-only">ไปหน้าสุดท้าย</span>
                 <Icons.chevR2 className="w-4 h-4" />
               </Button>
             </div>

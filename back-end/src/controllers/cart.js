@@ -1,5 +1,5 @@
-// cart.service.js
-const prisma = require('../db')
+// .js
+const prisma = require("../models/db");
 
 // Create a new cart
 const createCart = async (data) => {
@@ -30,9 +30,9 @@ const getCartById = async (id) => {
               price: true,
               productImg: true,
               capacity: true,
-              color: true
-            }
-          }
+              color: true,
+            },
+          },
         },
       },
     },
@@ -59,28 +59,28 @@ const updateCartById = async (id, data) => {
 };
 
 const addCartItemByCartId = async (data) => {
-  const {productId, shoppingCartId, quantity} = data
+  const { productId, shoppingCartId, quantity } = data;
   const item = await prisma.shoppingCartItem.upsert({
     where: {
-      productId_shoppingCartId : { productId, shoppingCartId}
+      productId_shoppingCartId: { productId, shoppingCartId },
     },
     update: {
       quantity: {
         increment: quantity,
-      }
+      },
     },
     create: data,
   });
-  return item
+  return item;
 };
 
 //removeShoppingCartItem
 const removeShoppingCartItem = async (data) => {
-  const {productId, shoppingCartId} = data
+  const { productId, shoppingCartId } = data;
   return await prisma.shoppingCartItem.delete({
     where: {
-      productId_shoppingCartId : { productId, shoppingCartId}
-    }
+      productId_shoppingCartId: { productId, shoppingCartId },
+    },
   });
 };
 
@@ -88,16 +88,16 @@ const removeShoppingCartItems = async (shoppingCartId, data) => {
   return await prisma.shoppingCartItem.deleteMany({
     where: {
       shoppingCartId: {
-        equals: shoppingCartId
+        equals: shoppingCartId,
       },
       productId: {
-        in: data
-      }
-    }
+        in: data,
+      },
+    },
   });
 };
 
-prisma.shoppingCartItem.deleteMany
+prisma.shoppingCartItem.deleteMany;
 
 // Delete a cart by ID
 const deleteCartById = async (id) => {
@@ -117,5 +117,5 @@ module.exports = {
   getCartByUserId,
   addCartItemByCartId,
   removeShoppingCartItem,
-  removeShoppingCartItems
+  removeShoppingCartItems,
 };

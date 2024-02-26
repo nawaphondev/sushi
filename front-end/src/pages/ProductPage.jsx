@@ -53,7 +53,7 @@ export default function ProductPage() {
   if (isLoading) return <div>กำลังโหลด</div>;
 
   return (
-    <div className="flex items-center justify-center flex-grow w-8/12 mx-auto">
+    <div className="flex items-center justify-center flex-grow w-8/12 mx-auto mt-3 p-3">
       <div className="flex flex-col gap-y-6">
         <div className="grid grid-cols-2 gap-x-16">
           <img

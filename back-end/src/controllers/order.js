@@ -1,16 +1,16 @@
-// order.service.js
-const prisma = require('../db')
+// .js
+const prisma = require("../models/db");
 
 // Create a new order
 const createOrder = async (data) => {
   return await prisma.order.create({
-    data
+    data,
   });
 };
 
 const createOrderDetail = async (data) => {
   return await prisma.orderDetail.create({
-    data
+    data,
   });
 };
 
@@ -18,7 +18,7 @@ const createOrderDetail = async (data) => {
 const createManyOrderDetail = async (data) => {
   return await prisma.orderDetail.createMany({
     data,
-    skipDuplicates: true
+    skipDuplicates: true,
   });
 };
 
@@ -28,8 +28,8 @@ const getAllOrders = async () => {
     include: {
       orderDetails: {
         include: {
-          product: true
-        }
+          product: true,
+        },
       },
       payment: true,
       shippingAddress: true,
@@ -41,9 +41,9 @@ const getAllOrders = async () => {
           lastName: true,
           phoneNumber: true,
           username: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 };
 
@@ -61,12 +61,12 @@ const getOrderById = async (id) => {
               name: true,
               productImg: true,
               capacity: true,
-              color: true
-            }
-          }
-        }
-      }
-    }
+              color: true,
+            },
+          },
+        },
+      },
+    },
   });
 };
 
@@ -93,11 +93,11 @@ const deleteOrderById = async (id) => {
 const getOrdersByUserId = async (userId) => {
   return prisma.order.findMany({
     where: {
-      userId
+      userId,
     },
     include: {
-      orderDetails: true
-    }
+      orderDetails: true,
+    },
   });
 };
 
@@ -109,5 +109,5 @@ module.exports = {
   deleteOrderById,
   createOrderDetail,
   getOrdersByUserId,
-  createManyOrderDetail
+  createManyOrderDetail,
 };

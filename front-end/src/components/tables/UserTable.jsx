@@ -23,21 +23,21 @@ export default function UserTable({ userType = "user" }) {
     },
   });
 
-  if (isError) return <div>Error</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>มีบางอย่างผิดปกติ</div>;
+  if (isLoading) return <div>กำลังโหลด...</div>;
 
   return (
     <div className="flex flex-col">
       {userType === "admin" && (
         <Dialog>
           <Button className="place-self-end" asChild>
-            <DialogTrigger>Add admin account</DialogTrigger>
+            <DialogTrigger>เพิ่มบัญชี</DialogTrigger>
           </Button>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>เพิ่มบัญชีแอดมิน</DialogTitle>
             </DialogHeader>
-            <RegisterForm />
+            <RegisterForm isAdmin={true}/>
           </DialogContent>
         </Dialog>
       )}

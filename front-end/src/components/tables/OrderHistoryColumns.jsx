@@ -9,18 +9,18 @@ export const OrderHistoryColumns = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "สถานะ",
   },
   {
     accessorKey: "orderDate",
-    header: "Order Date",
+    header: "วันที่สั่งซื้อ",
     cell: ({ row }) => {
       return thaiDateFormat(row.getValue("orderDate"));
     },
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: "ราคา",
     cell: ({ row }) => {
       // const total = 0
       const total = row.original?.orderDetails?.reduce(
@@ -28,11 +28,8 @@ export const OrderHistoryColumns = [
         0
       );
       const amount = parseFloat(total);
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "THB",
-      }).format(amount);
-      return <div className="font-medium text-right">{formatted}</div>;
+      const formatted = new Intl.NumberFormat("th-TH").format(amount);
+      return <div className="font-medium text-right">{formatted} บาท</div>;
     },
   },
   {

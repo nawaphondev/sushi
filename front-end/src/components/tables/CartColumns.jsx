@@ -1,6 +1,9 @@
-import CartQuantity from "@/components/CartQuantity";
 import CartRemoveButton from "@/components/CartRemoveButton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState, useEffect } from "react";
+import Icons from "@/components/Icons";
+import { cn } from "@/lib/utils";
+import useCart from "@/hooks/useCart";
 
 export const cartColumns = [
   {
@@ -45,7 +48,9 @@ export const cartColumns = [
     cell: ({ row }) => {
       const quantity = row.getValue("quantity");
       // return quantity
-      return <CartQuantity quantity={quantity} className="w-10" />;
+      
+      return <NumberSelector quantity={quantity} id={row.original.product.id} className="w-10" />;
+      // return <CartQuantity quantity={quantity} className="w-10" />;
     },
   },
   {
@@ -71,3 +76,48 @@ export const cartColumns = [
     },
   },
 ];
+
+// eslint-disable-next-line react/prop-types
+function NumberSelector({ quantity, className, id }) {
+  const [value, setValue] = useState(quantity);
+  const {setCart} = useCart()
+
+  useEffect(() => {
+    setCart(prev => {
+      return prev.map(item => {
+        if (item.product.id == id) item.quantity = value
+       
+        return item
+      })
+      // return prev
+    })
+  }, [value])
+  
+
+  return (
+    <div className="flex flex-row items-center justify-center p-2 border rounded-md select-none">
+      <Icons.minus
+        onClick={() =>
+          setValue((prev) => {
+            if (prev <= 1) return prev;
+            else return prev - 1;
+          })
+        }
+        className="w-8 h-8"
+      />
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => {
+          if (e.target.value <= 1) return;
+          setValue(e.target.value);
+        }}
+        className={cn(className, "text-center select-none")}
+      />
+      <Icons.plus
+        onClick={() => setValue((prev) => prev + 1)}
+        className="w-8 h-8"
+      />
+    </div>
+  );
+}

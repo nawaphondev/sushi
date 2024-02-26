@@ -1,7 +1,7 @@
 // cart.routes.js
 const express = require("express");
 const router = express.Router();
-const cartService = require("../services/cart.service");
+const cartService = require("../controllers/cart");
 
 // Create a new cart
 router.post("/create", async (req, res) => {
@@ -9,7 +9,9 @@ router.post("/create", async (req, res) => {
     const newCart = await cartService.createCart(req.body);
     res.json(newCart);
   } catch (error) {
-    res.status(500).json({ error: "Error creating cart", message: error.message });
+    res
+      .status(500)
+      .json({ error: "Error creating cart", message: error.message });
   }
 });
 
@@ -48,7 +50,9 @@ router.post("/add", async (req, res) => {
     const cartItem = await cartService.addCartItemByCartId(req.body);
     res.json(cartItem);
   } catch (error) {
-    res.status(500).json({ error: "Error adding item to cart", message: error.message});
+    res
+      .status(500)
+      .json({ error: "Error adding item to cart", message: error.message });
   }
 });
 
@@ -65,10 +69,11 @@ router.delete("/remove", async (req, res) => {
 
     res.json(removedCartItem);
   } catch (error) {
-    res.status(500).json({ error: "Error removing item from cart", message: error.message});
+    res
+      .status(500)
+      .json({ error: "Error removing item from cart", message: error.message });
   }
 });
-
 
 // Update a cart by ID
 router.put("/update/:id", async (req, res) => {

@@ -1,7 +1,7 @@
 // card.routes.js
 const express = require("express");
 const router = express.Router();
-const cardService = require("../services/card.service");
+const cardService = require("../controllers/card");
 
 // Create a new card
 router.post("/new", async (req, res) => {
@@ -52,26 +52,6 @@ router.get("/get", async (req, res) => {
     res.status(500).json({ error: "Error getting card" });
   }
 });
-
-// Update a card by ID
-// router.put("/update", async (req, res) => {
-
-//   try {
-//     const updatedcard = await cardService.updatecardById(
-//       req.body.id,
-//       req.body
-//     );
-
-//     if (!updatedcard) {
-//       res.status(404).json({ error: "card not found" });
-//       return;
-//     }
-
-//     res.json(updatedcard);
-//   } catch (error) {
-//     res.status(500).json({ error: "Error updating card" });
-//   }
-// });
 
 // Delete a card by ID
 router.post("/delete", async (req, res) => {

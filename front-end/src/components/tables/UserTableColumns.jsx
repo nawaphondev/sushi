@@ -10,31 +10,31 @@ export const columns = [
   {
     accessorKey: "firstName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="First Name" />
+      <DataTableColumnHeader column={column} title="ชื่อ" />
     ),
   },
   {
     accessorKey: "lastName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="First Name" />
+      <DataTableColumnHeader column={column} title="นามสกุล" />
     ),
   },
   {
     accessorKey: "username",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Username" />
+      <DataTableColumnHeader column={column} title="ชื่อผู้ใช้" />
     ),
   },
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <DataTableColumnHeader column={column} title="อีเมล" />
     ),
   },
   {
     accessorKey: "phoneNumber",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone Number" />
+      <DataTableColumnHeader column={column} title="หมายเลขโทรศัพท์" />
     ),
   },
 ];

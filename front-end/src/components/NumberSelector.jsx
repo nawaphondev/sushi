@@ -18,7 +18,7 @@ const NumberSelector = forwardRef(function NumberSelector(
       <Icons.minus
         onClick={() =>
           setValue((prev) => {
-            if (prev <= 0) return prev;
+            if (prev <= 1) return prev;
             else return prev - 1;
           })
         }
@@ -29,7 +29,7 @@ const NumberSelector = forwardRef(function NumberSelector(
         ref={ref}
         value={value}
         onChange={(e) => {
-          if (e.target.value <= 0) return;
+          if (e.target.value <= 1) return;
           setValue(e.target.value);
         }}
         className={cn(className, "text-center select-none")}

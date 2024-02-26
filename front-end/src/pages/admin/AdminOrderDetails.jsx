@@ -30,7 +30,7 @@ export default function AdminOrderDetails() {
           <span className="text-primary">Order Detail</span>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4 mt-3">
         <div className="flex flex-col gap-4 p-4 bg-white rounded-md">
           <div>
             เลขที่คำสั่งซื้อ <span>#{order.id}</span>
@@ -79,12 +79,12 @@ export default function AdminOrderDetails() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Color</TableHead>
-                <TableHead>Capacity</TableHead>
-                <TableHead className="w-[100px]">Quantity</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>ชื่อ</TableHead>
+                <TableHead>สี</TableHead>
+                <TableHead>ความจุ</TableHead>
+                <TableHead>ราคา</TableHead>
+                <TableHead className="w-[100px]">จำนวน</TableHead>
+                <TableHead className="text-right">ยอดรวม</TableHead>
               </TableRow>
             </TableHeader>
 

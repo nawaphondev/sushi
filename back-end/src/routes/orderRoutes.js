@@ -1,18 +1,18 @@
 // order.routes.js
 const express = require("express");
 const router = express.Router();
-const orderService = require("../services/order.service");
-const { removeShoppingCartItems } = require("../services/cart.service");
-const paymentService = require("../services/payment.service");
+const orderService = require("../controllers/order");
+const { removeShoppingCartItems } = require("../controllers/cart");
+const paymentService = require("../controllers/payment");
 
 // Create a new order
 router.post("/new", async (req, res) => {
-  const data = req.body
+  const data = req.body;
   // console.log(req.body);
   try {
     const newOrder = await orderService.createOrder({
       shippingAddressId: parseInt(data.shippingAddressId),
-      userId: data.userId
+      userId: data.userId,
     });
     const { id: orderId } = newOrder;
 
@@ -21,21 +21,29 @@ router.post("/new", async (req, res) => {
         productId: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
-        orderId
-      }
-    })
-    await orderService.createManyOrderDetail(orderDetails)
-    await removeShoppingCartItems(data.shoppingCartId, orderDetails.map((item) => item.productId))
+        orderId,
+      };
+    });
+    await orderService.createManyOrderDetail(orderDetails);
+    await removeShoppingCartItems(
+      data.shoppingCartId,
+      orderDetails.map((item) => item.productId)
+    );
     const payment = await paymentService.createPayment({
       orderId,
       method: data.paymentMethod,
-      amount: orderDetails.reduce((acc, item) => acc + item.price * item.quantity, 0)
-    })
+      amount: orderDetails.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+      ),
+    });
 
-    res.json({...newOrder, paymentId: payment.id});
+    res.json({ ...newOrder, paymentId: payment.id });
   } catch (error) {
-    console.log(req.body, error.message)
-    res.status(500).json({ error: "Error creating order", message: error.message });
+    console.log(req.body, error.message);
+    res
+      .status(500)
+      .json({ error: "Error creating order", message: error.message });
   }
 });
 
@@ -45,7 +53,9 @@ router.get("/all", async (req, res) => {
     const orders = await orderService.getAllOrders();
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: "Error getting orders", message: error.message });
+    res
+      .status(500)
+      .json({ error: "Error getting orders", message: error.message });
   }
 });
 
@@ -63,7 +73,9 @@ router.get("/:id", async (req, res) => {
 
     res.json(order);
   } catch (error) {
-    res.status(500).json({ error: "Error getting order", message: error.message });
+    res
+      .status(500)
+      .json({ error: "Error getting order", message: error.message });
   }
 });
 

@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useQueryClient } from "@tanstack/react-query";
 
 const passwordFormSchema = z
   .object({
@@ -32,6 +33,7 @@ const passwordFormSchema = z
   });
 
 export default function RegisterForm({ isAdmin = false }) {
+  const queryClient = useQueryClient()
   const navigate = useNavigate();
   const passwordForm = useForm({
     resolver: zodResolver(passwordFormSchema),
@@ -48,9 +50,11 @@ export default function RegisterForm({ isAdmin = false }) {
 
   async function passwordFormOnSubmit(values) {
     if (isAdmin) values.userType = "ADMIN";
+    // console.log(values.userType);
     const rs = await axios.post("http://localhost:3001/auth/register", values);
-    console.log(rs);
+    // console.log(rs);
     if (rs.status === 200) {
+      queryClient.invalidateQueries({ queryKey: ["ADMIN"] });
       toast.success("ลงทะเบียนสำเร็จ");
       if (!isAdmin) navigate("/login");
     }

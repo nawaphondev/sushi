@@ -14,8 +14,8 @@ export default function ProductTable() {
     },
   });
 
-  if (isError) return <div>Error</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>มีบางอย่างผิดปกติ</div>;
+  if (isLoading) return <div>กำลังโหลด...</div>;
 
   return (
     <div className="flex flex-col">
@@ -29,7 +29,7 @@ export default function ProductTable() {
           to="/products/add"
           className="px-12 py-2 text-white rounded-md bg-primary"
         >
-          Add Product
+          เพิ่มสินค้า
         </NavLink>
       </div>
       <DataTable columns={columns} data={data} />

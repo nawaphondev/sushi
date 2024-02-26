@@ -39,7 +39,7 @@ export default function HomePage() {
 
   return (
     <div className="flex items-center justify-center flex-grow w-8/12 mx-auto">
-      <div className="flex flex-col gap-x-4 gap-y-12">
+      <div className="flex flex-col gap-x-4 gap-y-12 mt-8 py-1">
         <Input
           type="text"
           placeholder="ค้นหาสินค้า..."

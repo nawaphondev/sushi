@@ -1,11 +1,10 @@
-// ship_address.service.js
-const prisma = require('../db')
-
+// .js
+const prisma = require("../models/db");
 
 // Create a new ship address
 const createPayment = async (data) => {
   return prisma.payment.create({
-    data
+    data,
   });
 };
 
@@ -15,7 +14,7 @@ const getAllPayments = async () => {
 };
 
 // get all Paymentss by user id
-const getAllPaymentsByUserId = async ({userId}) => {
+const getAllPaymentsByUserId = async ({ userId }) => {
   return prisma.payment.findMany({
     where: {
       userId,
@@ -43,7 +42,7 @@ const updatePaymentById = async (id, data) => {
 };
 
 // Delete a ship address by ID
-const deletePaymentById = async ({id}) => {
+const deletePaymentById = async ({ id }) => {
   return await prisma.payment.delete({
     where: {
       id,
@@ -57,5 +56,5 @@ module.exports = {
   getPaymentById,
   updatePaymentById,
   deletePaymentById,
-  getAllPaymentsByUserId
+  getAllPaymentsByUserId,
 };

@@ -46,6 +46,7 @@ import {
 import CardForm from "@/components/forms/CardForm";
 import { useState } from "react";
 import thaiAddress from "@/lib/thaiAddress";
+import useCart from "@/hooks/useCart";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "กรุณาระบุชื่อผู้รับ" }),
@@ -66,6 +67,7 @@ export default function CheckOutPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const {setCart} = useCart()
   const { data: addresses, isLoading: addressesIsLoading } = useQuery({
     queryKey: ["addresses"],
     queryFn: () =>
@@ -132,7 +134,10 @@ export default function CheckOutPage() {
           values.paymentMethod === "qrcode"
         )
           setOpen(true);
-        else navigate("/order/" + res.data.id);
+        else {
+          setCart([])
+          navigate("/order/" + res.data.id);
+        }
       }
     } catch (error) {
       console.log(error.message);
@@ -436,7 +441,10 @@ export default function CheckOutPage() {
             className="w-full"
             onClick={() =>
               mutate("COMPLETED", {
-                onSuccess: (data) => navigate("/order/" + data.orderId),
+                onSuccess: (data) => {
+                  setCart([])
+                  navigate("/order/" + data.orderId)
+                },
               })
             }
             value={paymentId}

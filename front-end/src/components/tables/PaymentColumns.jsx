@@ -7,27 +7,24 @@ export const PaymentColumns = [
   },
   {
     accessorKey: "paymentDate",
-    header: "Payment Date",
+    header: "วันที่ชำระ",
     cell: ({ row }) => thaiDateFormat(row.getValue("paymentDate")),
   },
   {
     accessorKey: "amount",
-    header: "Amount",
+    header: "ยอดที่ชำระ",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "THB",
-      }).format(amount);
-      return <div className="font-medium">{formatted}</div>;
+      const formatted = new Intl.NumberFormat("th-TH").format(amount);
+      return <div className="font-medium">{formatted} บาท</div>;
     },
   },
   {
     accessorKey: "method",
-    header: "Payment Method",
+    header: "วิธีชำระ",
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "สถานะ",
   },
 ];

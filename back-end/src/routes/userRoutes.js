@@ -1,7 +1,7 @@
 // user.routes.js
 const express = require("express");
 const router = express.Router();
-const userService = require("../services/user.service");
+const userService = require("../controllers/user");
 const authenticate = require("../middlewares/authenticate");
 
 const mapUserType = (userTypeString) => {
@@ -44,7 +44,7 @@ router.get("/admins", async (req, res) => {
     const users = await userService.getAllAdmins();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ error: "Error getting users" });
+    res.status(500).json({ error: "Error getting Admins" });
   }
 });
 

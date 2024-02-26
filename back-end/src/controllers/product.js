@@ -1,6 +1,5 @@
-// product.service.js
-const prisma = require('../db')
-
+// .js
+const prisma = require("../models/db");
 
 // Create a new product
 const createProduct = async (data) => {
@@ -9,8 +8,8 @@ const createProduct = async (data) => {
   data.id = parseInt(data.id);
 
   return prisma.product.upsert({
-    where :{
-      id: data.id || 0
+    where: {
+      id: data.id || 0,
     },
     update: {
       capacity: data?.capacity,
@@ -29,7 +28,7 @@ const createProduct = async (data) => {
       productImg: data.productImg,
       stock: data.stock,
       description: data.description,
-    }
+    },
   });
 };
 
@@ -58,7 +57,7 @@ const updateProductById = async (id, data) => {
 };
 
 // Delete a product by ID
-const deleteProductById = async ({id}) => {
+const deleteProductById = async (id) => {
   return prisma.product.delete({
     where: {
       id,

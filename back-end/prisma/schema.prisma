@@ -66,7 +66,7 @@ model Product {
 model ShoppingCart {
   id                Int                @id @default(autoincrement())
   userId            Int                @unique
-  user              User               @relation(fields: [userId], references: [id])
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   shoppingCartItems ShoppingCartItem[]
 }
 
@@ -76,7 +76,7 @@ model ShoppingCartItem {
   quantity       Int
   shoppingCartId Int
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade)
-  product        Product      @relation(fields: [productId], references: [id])
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@id([productId, shoppingCartId])
 }

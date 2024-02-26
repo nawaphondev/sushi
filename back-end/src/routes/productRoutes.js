@@ -1,14 +1,14 @@
 // product.routes.js
 const express = require("express");
 const router = express.Router();
-const productService = require("../services/product.service");
+const productService = require("../controllers/product");
 const fs = require("fs").promises;
 const multer = require("multer");
 const path = require("path");
 
 function createFilename(req, file) {
   fileExtension = path.extname(file.originalname)
-  return req.body.name + fileExtension
+  return `${req.body.name}-${req.body.color}${fileExtension}`
 }
 
 // Set up multer for handling file uploads
@@ -89,9 +89,8 @@ router.put("/update", async (req, res) => {
 
 // Delete a product by ID
 router.delete("/delete", async (req, res) => {
-
   try {
-    const deletedProduct = await productService.deleteProductById(req.body);
+    const deletedProduct = await productService.deleteProductById(req.body.id);
 
     if (!deletedProduct) {
       res.status(404).json({ error: "Product not found" });
