@@ -15,7 +15,7 @@ export default function ErrorBoundary() {
 
   return (
     <div className="flex flex-col items-center justify-center flex-grow w-8/12 mx-auto">
-      <h1>Error Boundary</h1>
+      <h1>เกิดข้อผิดพลาด</h1>
       <p>{error.message}</p>
       <Link to="/">กลับหน้าหลัก</Link>
     </div>

@@ -1,38 +1,31 @@
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import useAuth from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import useCart from "../hooks/useCart";
 
 export default function CartRemoveButton(props) {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      return axios
-        .delete(`http://localhost:3001/api/carts/remove`, {
-          data: {
-            ...props,
-            shoppingCartId: user.shoppingCart.id,
-          },
-        })
-        .then((res) => res.data);
-    },
-    onSuccess: () => {
-      toast("สินค้าถูกลบออกจากตะกร้า");
-      queryClient.invalidateQueries("shoppingCartItems");
-    },
-  });
+  const { setCart } = useCart();
 
   return (
-    <Button
-      variant="destructive"
+    <button
+      className="p-1 bg-red-600 rounded-full cursor-pointer size-fit"
       onClick={() => {
-        mutate();
+        // console.log(props)
+        // eslint-disable-next-line react/prop-types
+        setCart((prev) => prev.filter((p) => p.id != props.productId));
       }}
     >
-      ลบ
-    </Button>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="size-3 stroke-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
   );
 }
