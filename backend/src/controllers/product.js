@@ -1,64 +1,41 @@
-// .js
-const prisma = require("../models/db");
-
-// Create a new product
-const createProduct = async (data) => {
-  data.price = parseFloat(data.price);
-  data.stock = parseInt(data.stock);
-  data.id = parseInt(data.id);
-
-  return prisma.product.upsert({
-    where: {
-      id: data.id || 0,
-    },
-    update: {
-      capacity: data?.capacity,
-      color: data?.color,
-      name: data?.name,
-      price: data?.price,
-      productImg: data?.productImg,
-      stock: data?.stock,
-      description: data?.description,
-    },
-    create: {
-      capacity: data.capacity,
-      color: data.color,
-      name: data.name,
-      price: data.price,
-      productImg: data.productImg,
-      stock: data.stock,
-      description: data.description,
-    },
-  });
-};
+const db = require("../controllers/db");
 
 // Get all products
 const getAllProducts = async () => {
-  return prisma.product.findMany();
+  return db.product.findMany();
 };
 
 // Get a product by ID
 const getProductById = async (id) => {
-  return prisma.product.findUnique({
+  return db.product.findUnique({
     where: {
       id,
-    },
+    }
   });
 };
 
 // Update a product by ID
 const updateProductById = async (id, data) => {
-  return prisma.product.update({
+  return db.product.update({
     where: {
-      id,
+      id: id,
     },
     data,
   });
 };
 
-// Delete a product by ID
+const upsertProduct = async (id, data) => {
+  return db.product.upsert({
+    where: {
+      id: parseInt(id)
+    },
+    create: data,
+    update: data
+  })
+}
+
 const deleteProductById = async (id) => {
-  return prisma.product.delete({
+  return db.product.delete({
     where: {
       id,
     },
@@ -66,9 +43,9 @@ const deleteProductById = async (id) => {
 };
 
 module.exports = {
-  createProduct,
   getAllProducts,
   getProductById,
   updateProductById,
-  deleteProductById,
+  upsertProduct,
+  deleteProductById
 };

@@ -1,41 +1,61 @@
-// .js
-const prisma = require("../models/db");
+const db = require("../controllers/db");
 
 // Create a new order
 const createOrder = async (data) => {
-  return await prisma.order.create({
+  return await db.order.create({
     data,
   });
 };
 
-const createOrderDetail = async (data) => {
-  return await prisma.orderDetail.create({
-    data,
+const getTableOrder = async (accountId) => {
+  return await db.order.findMany({
+    where: {
+      accountId
+    },
+    orderBy: {
+      id: "desc",
+    },
+    take: 1,
   });
 };
 
 //create many order detail
-const createManyOrderDetail = async (data) => {
-  return await prisma.orderDetail.createMany({
+const createManyOrderItem = async (data) => {
+  return await db.orderItems.createMany({
     data,
-    skipDuplicates: true,
+    // skipDuplicates: true,
+
+  });
+};
+
+const createOrderItem = async (data) => {
+  return await db.orderItems.upsert({
+    where: {
+      orderId_productId: {
+        orderId: data.orderId,
+        productId: data.productId
+      }
+    },
+    create: data,
+    update: {
+      quantity: {
+        increment: data.quantity
+      }
+    }
   });
 };
 
 // Get all orders
 const getAllOrders = async () => {
-  return prisma.order.findMany({
+  return db.order.findMany({
     include: {
-      orderDetails: {
+      items: {
         include: {
           product: true,
         },
       },
-      payment: true,
-      shippingAddress: true,
       user: {
         select: {
-          avatar: true,
           email: true,
           firstName: true,
           lastName: true,
@@ -49,22 +69,22 @@ const getAllOrders = async () => {
 
 // Get a order by ID
 const getOrderById = async (id) => {
-  return prisma.order.findUnique({
+  return db.order.findUnique({
     where: {
       id,
     },
     include: {
-      orderDetails: {
-        include: {
+      items: {
+        select: {
+          price: true,
+          quantity: true,
           product: {
             select: {
               name: true,
-              productImg: true,
-              capacity: true,
-              color: true,
-            },
-          },
-        },
+              iamge: true
+            }
+          }
+        }
       },
     },
   });
@@ -72,7 +92,7 @@ const getOrderById = async (id) => {
 
 // Update a order by ID
 const updateOrderById = async (id, data) => {
-  return prisma.order.update({
+  return db.order.update({
     where: {
       id,
     },
@@ -82,7 +102,7 @@ const updateOrderById = async (id, data) => {
 
 // Delete a order by ID
 const deleteOrderById = async (id) => {
-  return prisma.order.delete({
+  return db.order.delete({
     where: {
       id,
     },
@@ -90,16 +110,45 @@ const deleteOrderById = async (id) => {
 };
 
 // get all orders from user
-const getOrdersByUserId = async (userId) => {
-  return prisma.order.findMany({
+const getOrdersByUserId = async (accountId) => {
+  const lastDay = Date.now() - (24 * 60 * 60 * 1000);
+  const yesterday = new Date(lastDay).toISOString();
+
+  return db.order.findMany({
     where: {
-      userId,
+      accountId,
+      orderDate: {
+        gte: yesterday
+      }
     },
     include: {
-      orderDetails: true,
+      items: {
+        include: {
+          product: true,
+        }
+      },
+      account: {
+        select: {
+          username: true
+        }
+      }
     },
+    take: 1,
+    orderBy: {
+      orderDate: "desc",
+    }
   });
 };
+
+const getAllSales = async () => {
+  return await db.$queryRaw`
+    SELECT p.id AS "id", p.name AS "name", SUM(oi.quantity) AS total
+    FROM OrderItems oi
+    JOIN Product p ON oi.productId = p.id
+    GROUP BY p.id, p.name
+    ORDER BY total DESC;
+  `
+}
 
 module.exports = {
   createOrder,
@@ -107,7 +156,9 @@ module.exports = {
   getOrderById,
   updateOrderById,
   deleteOrderById,
-  createOrderDetail,
   getOrdersByUserId,
-  createManyOrderDetail,
+  createOrderItem,
+  createManyOrderItem,
+  getTableOrder,
+  getAllSales
 };
