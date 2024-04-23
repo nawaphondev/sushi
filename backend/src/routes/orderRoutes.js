@@ -2,43 +2,34 @@
 const express = require("express");
 const router = express.Router();
 const orderService = require("../controllers/order");
-const { removeShoppingCartItems } = require("../controllers/cart");
-const paymentService = require("../controllers/payment");
 
 // Create a new order
 router.post("/new", async (req, res) => {
-  const data = req.body;
+  const {accountId, items} = req.body;
   // console.log(req.body);
   try {
-    const newOrder = await orderService.createOrder({
-      shippingAddressId: parseInt(data.shippingAddressId),
-      userId: data.userId,
-    });
-    const { id: orderId } = newOrder;
+    const [order] = await orderService.getTableOrder(accountId)
+    // console.log(accountId)
+    // if (!orderId) {
 
-    const orderDetails = data.items.map((item) => {
-      return {
-        productId: item.product.id,
+    //   const newOrder = await orderService.createOrder({
+    //     userId: userId,
+    //     tableId: tableId,
+    //   });
+    //   orderId = newOrder.id
+    // }
+
+    const orderItems = items.map((item) => {
+      orderService.createOrderItem({
+        productId: item.id,
         quantity: item.quantity,
-        price: item.product.price,
-        orderId,
-      };
-    });
-    await orderService.createManyOrderDetail(orderDetails);
-    await removeShoppingCartItems(
-      data.shoppingCartId,
-      orderDetails.map((item) => item.productId)
-    );
-    const payment = await paymentService.createPayment({
-      orderId,
-      method: data.paymentMethod,
-      amount: orderDetails.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-      ),
+        orderId: order.id,
+      })
     });
 
-    res.json({ ...newOrder, paymentId: payment.id });
+    // await orderService.createManyOrderItem(orderItems);
+
+    res.json({ success: true });
   } catch (error) {
     console.log(req.body, error.message);
     res
@@ -59,25 +50,26 @@ router.get("/all", async (req, res) => {
   }
 });
 
-// Get a order by ID
-router.get("/:id", async (req, res) => {
-  const orderId = parseInt(req.params.id, 10);
+// // Get a order by ID
+// router.get("/:id", async (req, res) => {
+//   const orderId = parseInt(req.params.id);
 
-  try {
-    const order = await orderService.getOrderById(orderId);
+//   try {
+//     const order = await orderService.getOrderById(orderId);
 
-    if (!order) {
-      res.status(404).json({ error: "Order not found" });
-      return;
-    }
+//     if (!order) {
+//       res.status(404).json({ error: "Order not found" });
+//       return;
+//     }
 
-    res.json(order);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error getting order", message: error.message });
-  }
-});
+//     res.json(order);
+//   } catch (error) {
+//     console.log(error.message)
+//     res
+//       .status(500)
+//       .json({ error: "Error getting order", message: error.message });
+//   }
+// });
 
 // Update a order by ID
 router.put("/update/:id", async (req, res) => {
@@ -115,16 +107,29 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-// Get all orders from user
-router.get("/user/:id", async (req, res) => {
-  const userId = parseInt(req.params.id, 10);
+// Get all orders from table
+router.get("/table/:id", async (req, res) => {
+  const accountId = parseInt(req.params.id, 10);
 
   try {
-    const orders = await orderService.getOrdersByUserId(userId);
+    const [orders] = await orderService.getOrdersByUserId(accountId);
     res.json(orders);
   } catch (error) {
+    console.log(error.message)
     res.status(500).json({ error: "Error getting orders" });
   }
 });
+
+
+router.get("/sales", async (req, res) => {
+  try {
+    const sales = await orderService.getAllSales()
+    // console.log(sales)
+    res.json(sales);
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: "Error getting items", message: error.message });
+  }
+})
 
 module.exports = router;

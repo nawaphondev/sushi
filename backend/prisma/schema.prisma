@@ -10,136 +10,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enum for user types
-enum UserType {
-  CUSTOMER
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
   ADMIN
 }
 
-// Enum for payment statuses
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
-
-// Enum for order statuses
-enum OrderStatus {
-  PENDING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-}
-
-// Model for users (customers and admins)
-model User {
-  id                Int               @id @default(autoincrement())
-  username          String            @unique
-  firstName         String
-  lastName          String
-  password          String
-  email             String            @unique
-  phoneNumber       String
-  avatar            String?
-  userType          UserType
-  secretQuestion String
-  secretAnswer String
-  orders            Order[]
-  shippingAddresses ShippingAddress[]
-  Cards             Card[]
-  shoppingCart      ShoppingCart?
+enum ProductCategory {
+  NIGIRI
+  MAKI
+  GUNKAN
+  OTHERS
 }
 
 // Model for products
 model Product {
-  id               Int                @id @default(autoincrement())
-  name             String
-  productImg       String
-  description      String?
-  color            String
-  capacity         String
-  price            Float
-  stock            Int
-  orderDetails     OrderDetail[]
-  shoppingCartItem ShoppingCartItem[]
+  id         Int             @id @default(autoincrement())
+  name       String
+  image      String
+  price      Float
+  category   ProductCategory @default(OTHERS)
+  orderItems OrderItems[]
 }
 
-// Model for shopping carts
-model ShoppingCart {
-  id                Int                @id @default(autoincrement())
-  userId            Int                @unique
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  shoppingCartItems ShoppingCartItem[]
+model Account {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  status       TableStatus   @default(AVAILABLE)
+  orders       Order[]
+  seats        Int
+  currentOrder Int?
+  reservations Reservation[]
 }
 
-// Model for shopping carts
-model ShoppingCartItem {
-  productId      Int
-  quantity       Int
-  shoppingCartId Int
-  shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@id([productId, shoppingCartId])
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  createdDate DateTime @default(now())
+  name        String
+  date        DateTime
+  phone       String
+  pax         Int
+  tableId     Int
+  table       Account  @relation(fields: [tableId], references: [id])
 }
 
 // Model for orders
 model Order {
-  id                Int             @id @default(autoincrement())
-  orderDate         DateTime        @default(now())
-  status            OrderStatus?    @default(value: PENDING)
-  orderDetails      OrderDetail[]
-  deliveryFee       Float           @default(0)
-  userId            Int
-  shippingAddressId Int?
-  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id], onDelete: SetNull)
-  payment           Payment?
+  id        Int          @id @default(autoincrement())
+  orderDate DateTime     @default(now())
+  items     OrderItems[]
+  accountId Int
+  account   Account      @relation(fields: [accountId], references: [id])
 }
 
-// Model for order details
-model OrderDetail {
-  id        Int     @id @default(autoincrement())
+// Model for order items
+model OrderItems {
   orderId   Int
   productId Int
   quantity  Int
-  price     Float
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
 
-// Model for payments
-model Payment {
-  id          Int           @id @default(autoincrement())
-  paymentDate DateTime      @default(now())
-  amount      Float
-  method      String
-  status      PaymentStatus @default(value: PENDING)
-  orderId     Int           @unique
-  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
-
-// Model for payment methods
-model Card {
-  id     Int    @id @default(autoincrement())
-  userId Int
-  number String
-  cvv    String
-  month  String
-  year   String
-  name   String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
-
-// Model for shipping addresses
-model ShippingAddress {
-  id          Int     @id @default(autoincrement())
-  userId      Int
-  address     String
-  subdistrict String
-  district    String
-  province    String
-  postalCode  String
-  order       Order[]
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([orderId, productId])
 }

@@ -6,40 +6,6 @@ const fs = require("fs").promises;
 const multer = require("multer");
 const path = require("path");
 
-function createFilename(req, file) {
-  fileExtension = path.extname(file.originalname)
-  return `${req.body.name}-${req.body.color}${fileExtension}`
-}
-
-// Set up multer for handling file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './public/images/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, createFilename(req, file))
-  }
-})
-const upload = multer({ storage }).single('productImg')
-
-// Create a new product
-router.post("/add", upload, async (req, res) => {
-  const data = req.body
-
-  if (req.file != undefined) {
-    data.productImg = createFilename(req, req.file)
-  }
-  
-  try {
-    const newProduct = await productService.createProduct(data);
-    
-    res.status(201).json(newProduct);
-  } catch (error) {
-    console.log(error.message)
-    res.status(500).json({ error: "Error creating product", message: error.message });
-  }
-});
-
 // Get all products
 router.get("/all", async (req, res) => {
   try {
@@ -68,13 +34,31 @@ router.get("/get/:id", async (req, res) => {
   }
 });
 
+function createFilename(req, file) {
+  // console.log(req.body)
+  fileExtension = path.extname(file.originalname)
+  return `${req.body.name}${fileExtension}`
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/images/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, createFilename(req, file))
+  }
+})
+const upload = multer({ storage }).single('image')
+
 // Update a product by ID
-router.put("/update", async (req, res) => {
+router.put("/update", upload, async (req, res) => {
+  // console.log(req.file)
+  const { id, name, price, category } = req.body
+
+  const image = req.file ? req.file.filename : req.body.image
   try {
-    const updatedProduct = await productService.updateProductById(
-      req.body.id,
-      req.body
-    );
+    // const updatedProduct = await productService.updateProductById(req.body.id, req.body.data);
+    const updatedProduct = await productService.upsertProduct(id, { name, price: parseFloat(price), category, image });
 
     if (!updatedProduct) {
       res.status(404).json({ error: "Product not found" });
@@ -83,7 +67,8 @@ router.put("/update", async (req, res) => {
 
     res.json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ error: "Error updating product" });
+    console.log(error.message)
+    res.status(500).json({ error: "Error updating product", message: error.message });
   }
 });
 
@@ -114,7 +99,7 @@ router.put("/updateImage/:id", async (req, res) => {
     const updatedProduct = await prisma.product.update({
       where: { id: parseInt(id) },
       data: {
-        productImg: imagePath,
+        image: imagePath,
       },
     });
 

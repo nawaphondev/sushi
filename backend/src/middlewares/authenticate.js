@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require("../models/db");
+const db = require("../controllers/db");
 
 module.exports = async (req, res, next) => {
   try {
@@ -14,19 +14,13 @@ module.exports = async (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     // console.log(payload)
 
-    const user = await db.user.findFirstOrThrow({
+    const account = await db.account.findFirstOrThrow({
       where: { id: payload.id },
-      include: {
-        shoppingCart: {
-          select: {
-            id: true,
-          },
-        },
-      },
     });
-    delete user.password;
-    // console.log(user)
-    req.user = user;
+    delete account.password;
+
+    // console.log(account)
+    req.account = account;
     next();
   } catch (err) {
     next(err);
